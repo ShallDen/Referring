@@ -1,0 +1,20 @@
+﻿<Window x:Name="MainForm" x:Class="Referring.Client.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Referring [Den Mayasov]" Height="415.571" Width="922.089" FontFamily="Constantia" Loaded="MainForm_Loaded">
+    <Grid>
+        <TextBox x:Name="inputTextBox" HorizontalAlignment="Left" Height="267" Margin="23,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="551"/>
+        <DataGrid x:Name="wordGrid" HorizontalAlignment="Left" Margin="606,37,0,0" VerticalAlignment="Top" Height="267" Width="279"/>
+        <Label x:Name="wordsTextBox" Content="Слова:" HorizontalAlignment="Left" Margin="606,10,0,0" VerticalAlignment="Top" Height="22" Width="54"/>
+        <Label x:Name="sourceTextTextBox" Content="Исходный текст:" HorizontalAlignment="Left" Margin="23,10,0,0" VerticalAlignment="Top"/>
+        <GroupBox Header="Выберите коэффициент реферирования:" HorizontalAlignment="Left" Margin="204,313,0,0" VerticalAlignment="Top" Height="57" Width="242">
+            <ComboBox x:Name="coefficientCombobox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="226" Height="23" Margin="0,5,0,0"/>
+        </GroupBox>
+        <Button x:Name="runReferringButton" Content="Реферировать" HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" Height="57" Margin="459,313,0,0" RenderTransformOrigin="1.572,0.879"/>
+        <GroupBox Header="Выберите текстовый файл:" HorizontalAlignment="Left" Margin="23,313,0,0" VerticalAlignment="Top" Height="57" Width="167">
+            <Button x:Name="selectFileButton" Content="Выбрать файл" HorizontalAlignment="Left" VerticalAlignment="Top" Width="115" Height="28" Margin="20,4,0,0"/>
+        </GroupBox>
+        <Button x:Name="saveSummaryButton" Content="Сохранить реферат" HorizontalAlignment="Left" Margin="606,313,0,0" VerticalAlignment="Top" Width="115" Height="57"/>
+
+    </Grid>
+</Window>
