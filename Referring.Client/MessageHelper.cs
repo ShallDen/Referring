@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Referring.Client
 {
-    public interface IMessageService
+    public interface IMessageManager
     {
         void ShowMessage(string message);
         void ShowWarning(string warning);
         void ShowError(string error);
     }
 
-    public class MessageService : IMessageService
+    public class MessageManager : IMessageManager
     {
         public void ShowMessage(string message)
         {

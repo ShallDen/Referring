@@ -40,14 +40,17 @@ namespace Referring.Client
         {
             Logger.LogInfo("Loading main window...");
             InitializeComponent();
+
+            FillReferringCoefficientCombobox();
             selectFileButton.Click += selectFileButton_Click;
             saveSummaryButton.Click += saveSummaryButton_Click;
-            coefficientCombobox.SelectionChanged += coefficientCombobox_SelectionChanged;
+            referringCoefficientCombobox.SelectionChanged += coefficientCombobox_SelectionChanged;
             runReferringButton.Click += runReferringButton_Click;
 
-            MessageService service = new MessageService();
-            FileManager fileManager = new FileManager();
-            MainPresenter presenter = new MainPresenter(this, fileManager, service);
+            MessageManager messageHelper = new MessageManager();
+            FileManager fileHelper = new FileManager();
+            ReferringManager referringHelper = new ReferringManager();
+            MainPresenter presenter = new MainPresenter(this, fileHelper, messageHelper, referringHelper);
         }
 
         public event EventHandler FileOpenClick;
@@ -65,6 +68,8 @@ namespace Referring.Client
             get { return inputTextBox.Text; }
             set { inputTextBox.Text = value; }
         }
+
+        private static List<double> coefficients = new List<double> { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
 
         void selectFileButton_Click(object sender, RoutedEventArgs e)
         {
@@ -90,6 +95,8 @@ namespace Referring.Client
 
         void coefficientCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ReferringCoefficient = coefficients[(sender as ComboBox).SelectedIndex];
+
             if (ReferringCoefficientChanged != null)
                 ReferringCoefficientChanged(sender, EventArgs.Empty);
         }
@@ -103,6 +110,12 @@ namespace Referring.Client
         public void ShowSourceText()
         {
             inputTextBox.Text = SourceText;
+        }
+
+        private void FillReferringCoefficientCombobox()
+        {
+            referringCoefficientCombobox.ItemsSource = coefficients;
+            referringCoefficientCombobox.SelectedIndex = coefficients.Count / 2;
         }
 
         private void MainForm_Loaded(object sender, RoutedEventArgs e)

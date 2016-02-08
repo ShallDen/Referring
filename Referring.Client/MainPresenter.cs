@@ -11,13 +11,15 @@ namespace Referring.Client
     {
         private readonly IMainWindow view;
         private readonly IFileManager fileManager;
-        private readonly IMessageService messageService;
+        private readonly IMessageManager messageManager;
+        private readonly IReferringManager referringManager;
 
-        public MainPresenter(IMainWindow _view, IFileManager _manager, IMessageService _messageService)
+        public MainPresenter(IMainWindow _view, IFileManager _manager, IMessageManager _messageManager, IReferringManager _referringgManager)
         {
             view = _view;
             fileManager = _manager;
-            messageService = _messageService;
+            messageManager = _messageManager;
+            referringManager = _referringgManager;
 
             view.FileOpenClick += view_FileOpenClick;
             view.FileSaveClick += view_FileSaveClick;
@@ -37,12 +39,19 @@ namespace Referring.Client
             else
             {
                 Logger.LogError("Path: " + view.FileFullPath + " isn't valid");
-                messageService.ShowError("Path: " + view.FileFullPath + " isn't valid");
+                messageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
             }
         }
 
         void view_FileSaveClick(object sender, EventArgs e)
         {
+            if (!referringManager.IsReferringCompete)
+            {
+                messageManager.ShowWarning("Please, perform referring process before saving summary.");
+                Logger.LogWarning("Please, perform referring process before saving summary.");
+                return;
+            }
+
             if (fileManager.IsExist(view.FileFullPath))
             {
                 string fileName = string.Concat(view.FileDirectory + "Summary_" + view.FileName);
@@ -57,18 +66,25 @@ namespace Referring.Client
             else
             {
                 Logger.LogError("Path: " + view.FileFullPath + " isn't valid");
-                messageService.ShowError("Path: " + view.FileFullPath + " isn't valid");
+                messageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
             }
         }
 
         void view_CoefficientChanged(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Logger.LogInfo("Referring coefficient was changed. New value: " + view.ReferringCoefficient);
         }
 
         void view_RunRefferingClick(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            Logger.LogInfo("Starting referring process...");
+
+            var testsent = view.SourceText.DivideToSentences();
+            var testwords = view.SourceText.DivideToWords();
+
+
+            messageManager.ShowWarning("This feature isn't implemented yet!");
+            Logger.LogWarning("This feature isn't implemented yet!");
         }
     }
 }
