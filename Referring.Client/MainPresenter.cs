@@ -21,7 +21,7 @@ namespace Referring.Client
 
             view.FileOpenClick += view_FileOpenClick;
             view.FileSaveClick += view_FileSaveClick;
-            view.CoefficientChanged += view_CoefficientChanged;
+            view.ReferringCoefficientChanged += view_CoefficientChanged;
             view.RunRefferingClick += view_RunRefferingClick;
         }
 

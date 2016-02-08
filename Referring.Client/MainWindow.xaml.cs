@@ -26,11 +26,12 @@ namespace Referring.Client
         string FileFullPath { get; }
         string FileName { get; }
         string FileDirectory { get; }
+        double ReferringCoefficient { get; }
         string SourceText { get; set; }
         void ShowSourceText();
         event EventHandler FileOpenClick;
         event EventHandler FileSaveClick;
-        event EventHandler CoefficientChanged;
+        event EventHandler ReferringCoefficientChanged;
         event EventHandler RunRefferingClick;
     }
     public partial class MainWindow : Window, IMainWindow
@@ -51,12 +52,13 @@ namespace Referring.Client
 
         public event EventHandler FileOpenClick;
         public event EventHandler FileSaveClick;
-        public event EventHandler CoefficientChanged;
+        public event EventHandler ReferringCoefficientChanged;
         public event EventHandler RunRefferingClick;
 
         public string FileFullPath { get; private set; }
         public string FileName { get; private set; }
         public string FileDirectory { get; private set; }
+        public double ReferringCoefficient { get; private set; }
 
         public string SourceText
         {
@@ -88,8 +90,8 @@ namespace Referring.Client
 
         void coefficientCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (CoefficientChanged != null)
-                CoefficientChanged(sender, EventArgs.Empty);
+            if (ReferringCoefficientChanged != null)
+                ReferringCoefficientChanged(sender, EventArgs.Empty);
         }
 
         void runReferringButton_Click(object sender, RoutedEventArgs e)
