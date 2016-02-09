@@ -35,6 +35,7 @@ namespace Referring.Client
                 view.SourceText = fileManager.GetContent(view.FileFullPath);
                 Logger.LogInfo("File was opened.");
                 view.ShowSourceText();
+                view.FocusOnRunReferringButton();
             }
             else
             {

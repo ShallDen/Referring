@@ -29,6 +29,7 @@ namespace Referring.Client
         double ReferringCoefficient { get; }
         string SourceText { get; set; }
         void ShowSourceText();
+        void FocusOnRunReferringButton();
         event EventHandler FileOpenClick;
         event EventHandler FileSaveClick;
         event EventHandler ReferringCoefficientChanged;
@@ -110,6 +111,11 @@ namespace Referring.Client
         public void ShowSourceText()
         {
             inputTextBox.Text = SourceText;
+        }
+
+        public void FocusOnRunReferringButton()
+        {
+            runReferringButton.Focus();
         }
 
         private void FillReferringCoefficientCombobox()
