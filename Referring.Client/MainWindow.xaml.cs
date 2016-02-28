@@ -28,7 +28,6 @@ namespace Referring.Client
         string FileDirectory { get; }
         double ReferringCoefficient { get; }
         string SourceText { get; set; }
-        void ShowSourceText();
         void FocusOnRunReferringButton();
         event EventHandler FileOpenClick;
         event EventHandler FileSaveClick;
@@ -41,16 +40,16 @@ namespace Referring.Client
         {
             Logger.LogInfo("Loading main window...");
             InitializeComponent();
-
             FillReferringCoefficientCombobox();
+            Logger.LogInfo("Main window loaded.");
+
             selectFileButton.Click += selectFileButton_Click;
             saveSummaryButton.Click += saveSummaryButton_Click;
             referringCoefficientCombobox.SelectionChanged += coefficientCombobox_SelectionChanged;
             runReferringButton.Click += runReferringButton_Click;
 
-            FileManager fileManager = new FileManager();
             ReferringManager referringManager = new ReferringManager();
-            MainPresenter presenter = new MainPresenter(this, fileManager, referringManager);
+            MainPresenter presenter = new MainPresenter(this, referringManager);
         }
 
         public event EventHandler FileOpenClick;
@@ -105,11 +104,6 @@ namespace Referring.Client
         {
             if (RunRefferingClick != null)
                 RunRefferingClick(sender, EventArgs.Empty);
-        }
-
-        public void ShowSourceText()
-        {
-            inputTextBox.Text = SourceText;
         }
 
         public void FocusOnRunReferringButton()

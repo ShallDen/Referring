@@ -10,13 +10,11 @@ namespace Referring.Client
     public class MainPresenter
     {
         private readonly IMainWindow view;
-        private readonly IFileManager fileManager;
         private readonly IReferringManager referringManager;
 
-        public MainPresenter(IMainWindow _view, IFileManager _manager, IReferringManager _referringgManager)
+        public MainPresenter(IMainWindow _view, IReferringManager _referringgManager)
         {
             view = _view;
-            fileManager = _manager;
             referringManager = _referringgManager;
 
             view.FileOpenClick += view_FileOpenClick;
@@ -27,17 +25,17 @@ namespace Referring.Client
 
         void view_FileOpenClick(object sender, EventArgs e)
         {
-            if(fileManager.IsExist(view.FileFullPath))
+            if(FileManager.IsExist(view.FileFullPath))
             {
                 Logger.LogInfo("Opening file: " + view.FileFullPath);
-                view.SourceText = fileManager.GetContent(view.FileFullPath);
+                view.SourceText = FileManager.GetContent(view.FileFullPath);
                 Logger.LogInfo("File was opened.");
                 view.FocusOnRunReferringButton();
             }
             else
             {
+                MessageManager.ShowError(string.Format("Path: {0} isn't valid", view.FileFullPath));
                 Logger.LogError("Path: " + view.FileFullPath + " isn't valid");
-                MessageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
             }
         }
 
@@ -50,21 +48,22 @@ namespace Referring.Client
                 return;
             }
 
-            if (fileManager.IsExist(view.FileFullPath))
+            if (FileManager.IsExist(view.FileFullPath))
             {
                 string fileName = string.Concat(view.FileDirectory + "Summary_" + view.FileName);
                 Logger.LogInfo("Saving file: " + fileName);
                 
-                if(fileManager.IsExist(fileName))
-                    fileManager.Delete(fileName);
+                if(FileManager.IsExist(fileName))
+                    FileManager.Delete(fileName);
 
-                fileManager.SaveContent(view.SourceText, fileName); // TODO: change view.SourceText to real summary text after its implementation
+                FileManager.SaveContent(view.SourceText, fileName); // TODO: change view.SourceText to real summary text after its implementation
+                MessageManager.ShowMessage("File was saved.");
                 Logger.LogInfo("File was saved.");
             }
             else
             {
-                Logger.LogError("Path: " + view.FileFullPath + " isn't valid");
-                MessageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
+                MessageManager.ShowError(string.Format("Path: {0} isn't valid", view.FileFullPath));
+                Logger.LogError(string.Format("Path: {0} isn't valid", view.FileFullPath));
             }
         }
 
@@ -79,7 +78,6 @@ namespace Referring.Client
 
             var testsent = view.SourceText.DivideToSentences();
             var testwords = view.SourceText.DivideToWords();
-
 
             MessageManager.ShowWarning("This feature isn't implemented yet!");
             Logger.LogWarning("This feature isn't implemented yet!");
