@@ -18,7 +18,7 @@ namespace Referring.Core
 
         static Logger()
         {
-            filename = "Referring.log";
+            filename = "Log.log";
             string startString = "\r\n*** START APPLICATION ***\r\n";
             File.AppendAllText(filename, startString, Encoding.GetEncoding("Windows-1251"));
         }

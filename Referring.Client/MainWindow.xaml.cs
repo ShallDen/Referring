@@ -23,17 +23,14 @@ namespace Referring.Client
     /// 
     public interface IMainWindow
     {
-        string FileFullPath { get; }
-        string FileName { get; }
-        string FileDirectory { get; }
-        double ReferringCoefficient { get; }
         string SourceText { get; set; }
         void FocusOnRunReferringButton();
-        event EventHandler FileOpenClick;
-        event EventHandler FileSaveClick;
-        event EventHandler ReferringCoefficientChanged;
-        event EventHandler RunRefferingClick;
+        event RoutedEventHandler FileOpenClick;
+        event RoutedEventHandler FileSaveClick;
+        event SelectionChangedEventHandler ReferringCoefficientChanged;
+        event RoutedEventHandler RunRefferingClick;
     }
+
     public partial class MainWindow : Window, IMainWindow
     {
         public MainWindow()
@@ -41,26 +38,19 @@ namespace Referring.Client
             Logger.LogInfo("Loading main window...");
             InitializeComponent();
             FillReferringCoefficientCombobox();
-            Logger.LogInfo("Main window loaded.");
 
             selectFileButton.Click += selectFileButton_Click;
             saveSummaryButton.Click += saveSummaryButton_Click;
             referringCoefficientCombobox.SelectionChanged += coefficientCombobox_SelectionChanged;
             runReferringButton.Click += runReferringButton_Click;
 
-            ReferringManager referringManager = new ReferringManager();
-            MainPresenter presenter = new MainPresenter(this, referringManager);
+            MainPresenter presenter = new MainPresenter(this);
         }
 
-        public event EventHandler FileOpenClick;
-        public event EventHandler FileSaveClick;
-        public event EventHandler ReferringCoefficientChanged;
-        public event EventHandler RunRefferingClick;
-
-        public string FileFullPath { get; private set; }
-        public string FileName { get; private set; }
-        public string FileDirectory { get; private set; }
-        public double ReferringCoefficient { get; private set; }
+        public event RoutedEventHandler FileOpenClick;
+        public event RoutedEventHandler FileSaveClick;
+        public event SelectionChangedEventHandler ReferringCoefficientChanged;
+        public event RoutedEventHandler RunRefferingClick;
 
         public string SourceText
         {
@@ -77,33 +67,32 @@ namespace Referring.Client
 
             if (dlg.ShowDialog() == true)
             {
-                FileFullPath = dlg.FileName;
-                FileName = dlg.SafeFileName;
-                FileDirectory = FileFullPath.Replace(FileName, "");
+                FileManager.FileFullPath = dlg.FileName;
+                FileManager.FileName = dlg.SafeFileName;
 
                 if (FileOpenClick != null)
-                    FileOpenClick(this, EventArgs.Empty);
+                    FileOpenClick(this, e);
             }
         }
 
         void saveSummaryButton_Click(object sender, RoutedEventArgs e)
         {
             if (FileSaveClick != null)
-                FileSaveClick(sender, EventArgs.Empty);
+                FileSaveClick(sender, e);
         }
 
         void coefficientCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ReferringCoefficient = coefficients[(sender as ComboBox).SelectedIndex];
+            ReferringManager.ReferringCoefficient = coefficients[(sender as ComboBox).SelectedIndex];
 
             if (ReferringCoefficientChanged != null)
-                ReferringCoefficientChanged(sender, EventArgs.Empty);
+                ReferringCoefficientChanged(sender, e);
         }
 
         void runReferringButton_Click(object sender, RoutedEventArgs e)
         {
             if (RunRefferingClick != null)
-                RunRefferingClick(sender, EventArgs.Empty);
+                RunRefferingClick(sender, e);
         }
 
         public void FocusOnRunReferringButton()

@@ -9,7 +9,7 @@
             get { return popup; }
         }
 
-        public static void ShowMessage(string message)
+        public static void ShowInformation(string message)
         {
             popup = new PopupWindow();
             popup.ShowMessage("Information", message);

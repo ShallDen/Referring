@@ -6,6 +6,15 @@ namespace Referring.Core
     public static class FileManager
     {
         private static readonly Encoding defaultEncoding = Encoding.GetEncoding(1251);
+        public static string FileFullPath { get; set; }
+        public static string FileName { get; set; }
+        public static string FileDirectory
+        {
+            get
+            {
+                return FileFullPath.Replace(FileName, "");
+            }
+        }
 
         public static string GetContent(string path)
         {

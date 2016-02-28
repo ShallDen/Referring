@@ -6,18 +6,9 @@ using System.Threading.Tasks;
 
 namespace Referring.Core
 {
-    public interface IReferringManager
+    public static class ReferringManager
     {
-        bool IsReferringCompete { get; set; }
-    }
-
-    public class ReferringManager : IReferringManager
-    {
-        public ReferringManager()
-        {
-            IsReferringCompete = false;
-        }
-
-        public bool IsReferringCompete { get; set; }
+        public static double ReferringCoefficient { get; set; }
+        public static bool IsReferringCompete { get; set; }
     }
 }

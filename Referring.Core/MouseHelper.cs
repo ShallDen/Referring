@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace EnglishHelper.Core
 {
-    public class MouseHelper
+    public static class MouseHelper
     {
         public static Win32Point GetMousePosition()
         {
