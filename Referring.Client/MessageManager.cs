@@ -1,6 +1,6 @@
 ﻿namespace Referring.Client
 {
-    public class MessageManager
+    public static class MessageManager
     {
         private static PopupWindow popup;
 

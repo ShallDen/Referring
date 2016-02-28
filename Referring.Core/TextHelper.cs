@@ -39,25 +39,13 @@ namespace Referring.Core
 
         public static List<string> ClearUnnecessarySymbolsInList(this List<string> list)
         {
-            for (int i = 0; i < list.Count; i++)
-            {
-                list[i] = list[i].ClearUnnecessarySymbolsInText();
-            }
-
-            return list;
+            return list.Select(c => c.ClearUnnecessarySymbolsInText()).ToList();
         }
 
         public static List<string> RemoveEmptyItemsInList(this List<string> list)
         {
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (string.IsNullOrWhiteSpace(list[i]))
-                {
-                    list.Remove(list[i]);
-                    i--;
-                }
-            }
-
+            var deletedItemsCount = list.RemoveAll(c=>string.IsNullOrWhiteSpace(c));
+            Logger.LogInfo("RemoveEmptyItemsInList: " + deletedItemsCount + " was deleted");
             return list;
         }
     }
