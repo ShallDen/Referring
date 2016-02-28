@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Referring [Den Mayasov]" Height="415.571" Width="922.089" FontFamily="Constantia" Loaded="MainForm_Loaded">
     <Grid>
-        <TextBox x:Name="inputTextBox" HorizontalAlignment="Left" Height="267" Margin="23,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="551" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+        <TextBox x:Name="inputTextBox" HorizontalAlignment="Left" Height="267" Margin="23,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="551" VerticalScrollBarVisibility="Auto"/>
         <DataGrid x:Name="wordGrid" HorizontalAlignment="Left" Margin="606,37,0,0" VerticalAlignment="Top" Height="267" Width="279" Background="{x:Null}"/>
         <Label x:Name="wordsTextBox" Content="Слова:" HorizontalAlignment="Left" Margin="606,10,0,0" VerticalAlignment="Top" Height="22" Width="54"/>
         <Label x:Name="sourceTextTextBox" Content="Исходный текст:" HorizontalAlignment="Left" Margin="23,10,0,0" VerticalAlignment="Top"/>

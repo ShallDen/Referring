@@ -1,29 +1,30 @@
-﻿using System.Windows;
-
-namespace Referring.Client
+﻿namespace Referring.Client
 {
-    public interface IMessageManager
+    public class MessageManager
     {
-        void ShowMessage(string message);
-        void ShowWarning(string warning);
-        void ShowError(string error);
-    }
+        private static PopupWindow popup;
 
-    public class MessageManager : IMessageManager
-    {
-        public void ShowMessage(string message)
+        public static PopupWindow Popup
         {
-            MessageBox.Show(message, "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+            get { return popup; }
         }
 
-        public void ShowWarning(string warning)
+        public static void ShowMessage(string message)
         {
-            MessageBox.Show(warning, "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+            popup = new PopupWindow();
+            popup.ShowMessage("Information", message);
         }
 
-        public void ShowError(string error)
+        public static void ShowWarning(string warning)
         {
-            MessageBox.Show(error, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            popup = new PopupWindow();
+            popup.ShowMessage("Warning", warning);
+        }
+
+        public static void ShowError(string error)
+        {
+            popup = new PopupWindow();
+            popup.ShowMessage("Error", error);
         }
     }
 }

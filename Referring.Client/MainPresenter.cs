@@ -11,14 +11,12 @@ namespace Referring.Client
     {
         private readonly IMainWindow view;
         private readonly IFileManager fileManager;
-        private readonly IMessageManager messageManager;
         private readonly IReferringManager referringManager;
 
-        public MainPresenter(IMainWindow _view, IFileManager _manager, IMessageManager _messageManager, IReferringManager _referringgManager)
+        public MainPresenter(IMainWindow _view, IFileManager _manager, IReferringManager _referringgManager)
         {
             view = _view;
             fileManager = _manager;
-            messageManager = _messageManager;
             referringManager = _referringgManager;
 
             view.FileOpenClick += view_FileOpenClick;
@@ -34,13 +32,12 @@ namespace Referring.Client
                 Logger.LogInfo("Opening file: " + view.FileFullPath);
                 view.SourceText = fileManager.GetContent(view.FileFullPath);
                 Logger.LogInfo("File was opened.");
-                view.ShowSourceText();
                 view.FocusOnRunReferringButton();
             }
             else
             {
                 Logger.LogError("Path: " + view.FileFullPath + " isn't valid");
-                messageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
+                MessageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
             }
         }
 
@@ -48,7 +45,7 @@ namespace Referring.Client
         {
             if (!referringManager.IsReferringCompete)
             {
-                messageManager.ShowWarning("Please, perform referring process before saving summary.");
+                MessageManager.ShowWarning("Please, perform referring process before saving summary.");
                 Logger.LogWarning("Please, perform referring process before saving summary.");
                 return;
             }
@@ -67,7 +64,7 @@ namespace Referring.Client
             else
             {
                 Logger.LogError("Path: " + view.FileFullPath + " isn't valid");
-                messageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
+                MessageManager.ShowError("Path: " + view.FileFullPath + " isn't valid");
             }
         }
 
@@ -84,7 +81,7 @@ namespace Referring.Client
             var testwords = view.SourceText.DivideToWords();
 
 
-            messageManager.ShowWarning("This feature isn't implemented yet!");
+            MessageManager.ShowWarning("This feature isn't implemented yet!");
             Logger.LogWarning("This feature isn't implemented yet!");
         }
     }

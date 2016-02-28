@@ -48,10 +48,9 @@ namespace Referring.Client
             referringCoefficientCombobox.SelectionChanged += coefficientCombobox_SelectionChanged;
             runReferringButton.Click += runReferringButton_Click;
 
-            MessageManager messageHelper = new MessageManager();
-            FileManager fileHelper = new FileManager();
-            ReferringManager referringHelper = new ReferringManager();
-            MainPresenter presenter = new MainPresenter(this, fileHelper, messageHelper, referringHelper);
+            FileManager fileManager = new FileManager();
+            ReferringManager referringManager = new ReferringManager();
+            MainPresenter presenter = new MainPresenter(this, fileManager, referringManager);
         }
 
         public event EventHandler FileOpenClick;

@@ -41,6 +41,7 @@
   <ItemGroup>
     <Compile Include="FileManager.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="MouseHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferringManager.cs" />
     <Compile Include="TextHelper.cs" />
