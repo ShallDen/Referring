@@ -76,8 +76,13 @@ namespace Referring.Client
         {
             Logger.LogInfo("Starting referring process...");
 
-            var testsent = view.SourceText.DivideToSentences();
-            var testwords = view.SourceText.DivideToWords();
+            var testsent = view.SourceText.DivideTextToSentences();
+            var testwords = view.SourceText.DivideTextToWords();
+
+            var testCleartext = view.SourceText.ClearUnnecessarySymbolsInText();
+            testwords = testwords.ClearUnnecessarySymbolsInList();
+            testwords = testwords.RemoveEmptyItemsInList();
+
 
             MessageManager.ShowWarning("This feature isn't implemented yet!");
             Logger.LogWarning("This feature isn't implemented yet!");
