@@ -28,8 +28,9 @@ namespace Referring.Client
             if(FileManager.IsExist(FileManager.FileFullPath))
             {
                 Logger.LogInfo("Opening file: " + FileManager.FileFullPath);
-                view.SourceText = FileManager.GetContent(FileManager.FileFullPath);
+                ReferringManager.OriginalText = FileManager.GetContent(FileManager.FileFullPath);
                 Logger.LogInfo("File was opened.");
+                view.SourceText = ReferringManager.OriginalText;
                 view.FocusOnRunReferringButton();
             }
             else
@@ -56,7 +57,7 @@ namespace Referring.Client
                 if(FileManager.IsExist(fileName))
                     FileManager.Delete(fileName);
 
-                FileManager.SaveContent(view.SourceText, fileName); // TODO: change view.SourceText to real summary text after its implementation
+                FileManager.SaveContent(ReferringManager.ReferredText, fileName);
                 MessageManager.ShowInformation("File was saved.");
                 Logger.LogInfo("File was saved.");
             }
@@ -69,6 +70,7 @@ namespace Referring.Client
 
         void view_CoefficientChanged(object sender, SelectionChangedEventArgs e)
         {
+            ReferringManager.ReferringCoefficient = (double)e.AddedItems[0];
             Logger.LogInfo("Referring coefficient was changed. New value: " + ReferringManager.ReferringCoefficient);
         }
 
@@ -76,13 +78,17 @@ namespace Referring.Client
         {
             Logger.LogInfo("Starting referring process...");
 
-            var testsent = view.SourceText.DivideTextToSentences();
-            var testwords = view.SourceText.DivideTextToWords();
+            //var testsent = ReferringManager.OriginalText.DivideTextToSentences();
+            //var testwords = ReferringManager.OriginalText.DivideTextToWords()
+            //    .ClearUnnecessarySymbolsInList()
+            //    .RemoveEmptyItemsInList();
 
-            var testCleartext = view.SourceText.ClearUnnecessarySymbolsInText();
-            testwords = testwords.ClearUnnecessarySymbolsInList();
-            testwords = testwords.RemoveEmptyItemsInList();
+            //var testCleartext = ReferringManager.OriginalText.ClearUnnecessarySymbolsInText();
 
+            string test = Tagger.DetectPOS("feature");
+            string stemTest = Stemmer.Stemm("feature");
+
+          //  WordNetManager wm = new WordNetManager();
 
             MessageManager.ShowWarning("This feature isn't implemented yet!");
             Logger.LogWarning("This feature isn't implemented yet!");

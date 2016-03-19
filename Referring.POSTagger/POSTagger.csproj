@@ -1,16 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EBE525F7-5B4E-432E-A9DC-E281515E363E}</ProjectGuid>
+    <ProjectGuid>{445D5E0D-3BF6-4A96-BF36-F418B6704FB1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Referring.Core</RootNamespace>
-    <AssemblyName>Referring.Core</AssemblyName>
+    <RootNamespace>Referring.POSTagger</RootNamespace>
+    <AssemblyName>Referring.POSTagger</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,32 +37,18 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileManager.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="MouseHelper.cs" />
-    <Compile Include="POSTagger.cs" />
+    <Compile Include="FastTag.cs" />
+    <Compile Include="FastTagResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferringManager.cs" />
-    <Compile Include="Stemmer.cs" />
-    <Compile Include="TextHelper.cs" />
-    <Compile Include="WordNetManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Referring.POSTagger\POSTagger.csproj">
-      <Project>{445d5e0d-3bf6-4a96-bf36-f418b6704fb1}</Project>
-      <Name>POSTagger</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Referring.Stemmers\Stemmers.csproj">
-      <Project>{f8066cf0-a5f8-4dcf-b553-ec90bd28383b}</Project>
-      <Name>Stemmers</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Referring.WordNet\WordNet.csproj">
-      <Project>{c1839d70-9ff7-431b-a3ca-08e8ce70ba2c}</Project>
-      <Name>WordNet</Name>
-    </ProjectReference>
+    <Content Include="Grammar\lexicon.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

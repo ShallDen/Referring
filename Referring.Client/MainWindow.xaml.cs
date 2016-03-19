@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 using Referring.Core;
+using System.Collections.ObjectModel;
 
 namespace Referring.Client
 {
@@ -83,8 +84,6 @@ namespace Referring.Client
 
         void coefficientCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ReferringManager.ReferringCoefficient = coefficients[(sender as ComboBox).SelectedIndex];
-
             if (ReferringCoefficientChanged != null)
                 ReferringCoefficientChanged(sender, e);
         }
