@@ -8,7 +8,7 @@ namespace Referring.Core
 {
     public static class TextHelper
     {
-        private static string[] sentenceSeparator = { ".", "!", "?", "!?", "?!" };
+        private static string[] sentenceSeparator = { ". ", "! ", "? ", "!? ", "?! " };
         private static string[] wordsSeparator = { " ", ".", "!", "?", "!?", "?!" };
 
         public static List<string> DivideTextToSentences(this string text)
@@ -29,11 +29,14 @@ namespace Referring.Core
                 .Replace(":", "")
                 .Replace(";", "")
                 .Replace(",", "")
-                .Replace("-", "")
+                .Replace("-", " ")
+                .Replace("—", "")
                 .Replace("\"", "")
+                .Replace("“", "")
+                .Replace("”", "")
                 .Replace("\r", " ")
                 .Replace("\n", " ");
-
+            
             return text;
         }
 
@@ -42,11 +45,21 @@ namespace Referring.Core
             return list.Select(c => c.ClearUnnecessarySymbolsInText()).ToList();
         }
 
+        public static List<string> ClearWhiteSpacesInList(this List<string> list)
+        {
+            return list.Select(c => c.Trim()).ToList();
+        }
+
         public static List<string> RemoveEmptyItemsInList(this List<string> list)
         {
             var deletedItemsCount = list.RemoveAll(c=>string.IsNullOrWhiteSpace(c));
             Logger.LogInfo("RemoveEmptyItemsInList: " + deletedItemsCount + " was deleted");
             return list;
+        }
+
+        public static List<string> ToLower(this List<string> list)
+        {
+            return list.Select(c => c.ToLower()).ToList();
         }
     }
 }

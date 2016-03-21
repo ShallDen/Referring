@@ -46,6 +46,18 @@ namespace Referring.Client
             runReferringButton.Click += runReferringButton_Click;
 
             MainPresenter presenter = new MainPresenter(this);
+
+
+            //TODO: Delete this code when development will be complete
+            ///////////////////////
+
+            FileManager.FileFullPath = "C:\\Users\\ShallDen\\Desktop\\text.txt";
+            FileManager.FileName = "text.txt";
+
+            if (FileOpenClick != null)
+               FileOpenClick(this, new RoutedEventArgs());
+
+            ///////////////////////
         }
 
         public event RoutedEventHandler FileOpenClick;
@@ -63,17 +75,20 @@ namespace Referring.Client
 
         void selectFileButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Filter = "Текстовые файлы|*.txt";
+            //TODO: Uncomment this code when development will be complete
+            ///////////////////////
+            //OpenFileDialog dlg = new OpenFileDialog();
+            //dlg.Filter = "Текстовые файлы|*.txt";
 
-            if (dlg.ShowDialog() == true)
-            {
-                FileManager.FileFullPath = dlg.FileName;
-                FileManager.FileName = dlg.SafeFileName;
+            //if (dlg.ShowDialog() == true)
+            //{
+            //    FileManager.FileFullPath = dlg.FileName;
+            //    FileManager.FileName = dlg.SafeFileName;
 
-                if (FileOpenClick != null)
-                    FileOpenClick(this, e);
-            }
+            //if (FileOpenClick != null)
+            //    FileOpenClick(this, e);
+            //}
+            ///////////////////////
         }
 
         void saveSummaryButton_Click(object sender, RoutedEventArgs e)

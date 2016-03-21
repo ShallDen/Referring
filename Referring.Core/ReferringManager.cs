@@ -13,6 +13,5 @@ namespace Referring.Core
         public static string ReferredText { get; set; }
         public static double ReferringCoefficient { get; set; }
         public static bool IsReferringCompete { get; set; }
-       
     }
 }

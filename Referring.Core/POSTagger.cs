@@ -14,7 +14,7 @@ namespace Referring.Core
             lexicon = File.ReadAllText("Grammar\\lexicon.txt");
             fastTag = new FastTag(lexicon);
         }
-
+        
         public static string DetectPOS(string word)
         {
             var result = fastTag.Tag(word);

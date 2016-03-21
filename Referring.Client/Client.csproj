@@ -53,6 +53,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ReferringProcess.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,6 +107,10 @@
     <ProjectReference Include="..\Referring.Core\Core.csproj">
       <Project>{ebe525f7-5b4e-432e-a9dc-e281515e363e}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Referring.POSTagger\POSTagger.csproj">
+      <Project>{445d5e0d-3bf6-4a96-bf36-f418b6704fb1}</Project>
+      <Name>POSTagger</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

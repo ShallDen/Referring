@@ -76,22 +76,8 @@ namespace Referring.Client
 
         void view_RunRefferingClick(object sender, RoutedEventArgs e)
         {
-            Logger.LogInfo("Starting referring process...");
-
-            //var testsent = ReferringManager.OriginalText.DivideTextToSentences();
-            //var testwords = ReferringManager.OriginalText.DivideTextToWords()
-            //    .ClearUnnecessarySymbolsInList()
-            //    .RemoveEmptyItemsInList();
-
-            //var testCleartext = ReferringManager.OriginalText.ClearUnnecessarySymbolsInText();
-
-            string test = Tagger.DetectPOS("feature");
-            string stemTest = Stemmer.Stemm("feature");
-
-          //  WordNetManager wm = new WordNetManager();
-
-            MessageManager.ShowWarning("This feature isn't implemented yet!");
-            Logger.LogWarning("This feature isn't implemented yet!");
+            ReferringProcess referring = new ReferringProcess();
+            referring.RunReferrengProcess();
         }
     }
 }
