@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Referring.Core;
+using LAIR.Collections.Generic;
+using Referring.WordNet;
 
 namespace Referring.Client
 {
@@ -11,9 +13,10 @@ namespace Referring.Client
     {
         List<string> sentenceList = new List<string>();
         List<string> wordList = new List<string>();
+        List<string> goodWordList = new List<string>();
 
-        Dictionary<string, int> sentenceDictionary = new Dictionary<string, int>();
-        Dictionary<string, int> wordDictionary = new Dictionary<string, int>();
+        //Dictionary<string, int> sentenceDictionary = new Dictionary<string, int>();
+        //Dictionary<string, int> wordDictionary = new Dictionary<string, int>();
 
         List<string> gooodPOSesList = new List<string>();
         List<string> restrictedWordsList = new List<string>();
@@ -21,6 +24,8 @@ namespace Referring.Client
         public void RunReferrengProcess()
         {
             Logger.LogInfo("Starting referring process...");
+
+            WordNetManager wordNetManager = new WordNetManager();
 
             InitializeRestrictedWords();
             InitializeGoodPOSes();
@@ -36,31 +41,51 @@ namespace Referring.Client
                 .RemoveEmptyItemsInList()
                 .ToLower();
 
-            var list = new List<string>();
-
+            
+            //choose sentence
             foreach (var sentence in sentenceList)
             {
-               // sentenceDictionary.Add(sentence, 0);
-
                 var wordsInSentence = sentence.DivideTextToWords();
 
+                //choose word
                 foreach (var word in wordsInSentence)
                 {
+                    //skip for restricted words
                     if (IsWordRestricted(word))
                         continue;
 
+                    //detect part of speech
                     var wordPOS = Tagger.DetectPOS(word);
                     
+                    //is word noun, verb, adjective or adverb?
                     if(IsPOSGood(wordPOS))
                     {
-                        list.Add(word);
+                        goodWordList.Add(word);
 
+                        //synsets search
+                        var synsets = wordNetManager.GetSynSets(word);
+                        var synsets0 = wordNetManager.GetSynSets(word, wordPOS);
+
+                        if (!synsets.Any())
+                        {
+                            var stemmedWord = Stemmer.Stemm(word);
+                            synsets = wordNetManager.GetSynSets(stemmedWord);
+                            synsets0 = wordNetManager.GetSynSets(stemmedWord, wordPOS);
+
+                            if (!synsets.Any())
+                                continue;
+                        }
+
+                        foreach (var synset in synsets)
+                        {
+                            var words = synset.Words;
+                        }
 
                     }
                 }
             }
 
-            var test = list.Distinct().ToList();
+            var test = goodWordList.Distinct().ToList();
             MessageManager.ShowWarning("This feature isn't implemented yet!");
             Logger.LogWarning("This feature isn't implemented yet!");
         }
