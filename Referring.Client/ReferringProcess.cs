@@ -18,8 +18,8 @@ namespace Referring.Client
         //Dictionary<string, int> sentenceDictionary = new Dictionary<string, int>();
         //Dictionary<string, int> wordDictionary = new Dictionary<string, int>();
 
-        List<string> gooodPOSesList = new List<string>();
-        List<string> restrictedWordsList = new List<string>();
+        List<string> gooodPOSesList;
+        List<string> restrictedWordsList;
 
         public void RunReferrengProcess()
         {
@@ -93,37 +93,13 @@ namespace Referring.Client
        
         private void InitializeRestrictedWords()
         {
-            restrictedWordsList.Add("is");
-            restrictedWordsList.Add("am");
-            restrictedWordsList.Add("are");
-            restrictedWordsList.Add("was");
-            restrictedWordsList.Add("has");
-            restrictedWordsList.Add("it");
-            restrictedWordsList.Add("it's");
-            restrictedWordsList.Add("two");
+            restrictedWordsList = new List<string> { "is", "am", "are", "was", "has", "it", "it's", "two"};
         }
 
         private void InitializeGoodPOSes()
         {
-            gooodPOSesList.Add("JJ");  //adjectives
-            gooodPOSesList.Add("JJR");
-            gooodPOSesList.Add("JJS");
-
-            gooodPOSesList.Add("NN");  //nouns
-            gooodPOSesList.Add("NNP");
-            gooodPOSesList.Add("NNPS");
-            gooodPOSesList.Add("NNS");
-
-            gooodPOSesList.Add("RB");  //adverbs
-            gooodPOSesList.Add("RBR");
-            gooodPOSesList.Add("RBS");
-
-            gooodPOSesList.Add("VB");  //verbs
-            gooodPOSesList.Add("VBD");
-            gooodPOSesList.Add("VBG");
-            gooodPOSesList.Add("VBN");
-            gooodPOSesList.Add("VBP");
-            gooodPOSesList.Add("VBZ");
+            //choose only adjectives, nouns, adverbs, verbs
+            gooodPOSesList = new List<string> { "JJ", "JJR", "JJS", "NN", "NNP", "NNPS", "NNS", "RB", "RBR", "RBS", "VB", "VBD", "VBG", "VBN", "VBP", "VBZ" };
         }
         
         private bool IsWordRestricted(string word)
@@ -141,28 +117,5 @@ namespace Referring.Client
             else
                 return false;
         }
-
     }
 }
-
-  //if (!wordDictionary.ContainsKey(word))
-  //{
-  //    wordDictionary.Add(word, 0);
-  //}
-  //else
-  //{
-  //    wordDictionary[word] += 1;
-  //}
-
-
-//var testwords = ReferringManager.OriginalText.DivideTextToWords()
-//    .ClearUnnecessarySymbolsInList()
-//    .RemoveEmptyItemsInList()
-//    .ToLower();
-
-////var testCleartext = ReferringManager.OriginalText.ClearUnnecessarySymbolsInText();
-
-//string test = Tagger.DetectPOS("feature");
-//string stemTest = Stemmer.Stemm("feature");
-
-////  WordNetManager wm = new WordNetManager();
