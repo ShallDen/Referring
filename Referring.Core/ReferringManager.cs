@@ -7,11 +7,65 @@ using System.Threading.Tasks;
 
 namespace Referring.Core
 {
-    public static class ReferringManager
+    public class ReferringManager : INotifyPropertyChanged 
     {
-        public static string OriginalText { get; set; }
-        public static string ReferredText { get; set; }
-        public static double ReferringCoefficient { get; set; }
-        public static bool IsReferringCompete { get; set; }
+        private bool mIsPOSDetectionActivated;
+        private bool mIsStemmingForAllTextActivated;
+        private bool mIsStemmingIfNoSynsetsFoundActivated;
+        private static ReferringManager instance;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected ReferringManager() { }
+
+        public string OriginalText { get; set; }
+        public string ReferredText { get; set; }
+        public double ReferringCoefficient { get; set; }
+        public bool IsReferringCompete { get; set; }
+
+        public static ReferringManager Instance
+        {
+            get { return instance ?? (instance = new ReferringManager()); }
+        }
+
+        public bool IsPOSDetectionActivated
+        {
+            get { return mIsPOSDetectionActivated; }
+            set
+            {
+                if (mIsPOSDetectionActivated != value)
+                {
+                    mIsPOSDetectionActivated = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsPOSDetectionActivated"));
+                }
+            }
+        }
+        public bool IsStemmingForAllTextActivated
+        {
+            get { return mIsStemmingForAllTextActivated; }
+            set
+            {
+                if (mIsStemmingForAllTextActivated != value)
+                {
+                    mIsStemmingForAllTextActivated = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsStemmingForAllTextActivated"));
+                }
+            }
+        }
+        public bool IsStemmingIfNoSynsetsFoundActivated
+        {
+            get { return mIsStemmingIfNoSynsetsFoundActivated; }
+            set
+            {
+                if (mIsStemmingIfNoSynsetsFoundActivated != value)
+                {
+                    mIsStemmingIfNoSynsetsFoundActivated = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsStemmingIfNoSynsetsFoundActivated"));
+                }
+            }
+        }
     }
 }

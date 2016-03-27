@@ -47,11 +47,17 @@ namespace Referring.Client
 
             MainPresenter presenter = new MainPresenter(this);
 
+            usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
+            useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
+
+            ReferringManager.Instance.IsPOSDetectionActivated = true;
+            ReferringManager.Instance.IsStemmingForAllTextActivated = true;
 
             //TODO: Delete this code when development will be complete
             ///////////////////////
 
-            FileManager.FileFullPath = "C:\\Users\\ShallDen\\Desktop\\text.txt";
+            string userName = Environment.UserName;
+            FileManager.FileFullPath = "C:\\Users\\" + userName + "\\Desktop\\text.txt";
             FileManager.FileName = "text.txt";
 
             if (FileOpenClick != null)
@@ -75,20 +81,17 @@ namespace Referring.Client
 
         void selectFileButton_Click(object sender, RoutedEventArgs e)
         {
-            //TODO: Uncomment this code when development will be complete
-            ///////////////////////
-            //OpenFileDialog dlg = new OpenFileDialog();
-            //dlg.Filter = "Текстовые файлы|*.txt";
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Текстовые файлы|*.txt";
 
-            //if (dlg.ShowDialog() == true)
-            //{
-            //    FileManager.FileFullPath = dlg.FileName;
-            //    FileManager.FileName = dlg.SafeFileName;
+            if (dlg.ShowDialog() == true)
+            {
+                FileManager.FileFullPath = dlg.FileName;
+                FileManager.FileName = dlg.SafeFileName;
 
-            //if (FileOpenClick != null)
-            //    FileOpenClick(this, e);
-            //}
-            ///////////////////////
+                if (FileOpenClick != null)
+                    FileOpenClick(this, e);
+            }
         }
 
         void saveSummaryButton_Click(object sender, RoutedEventArgs e)

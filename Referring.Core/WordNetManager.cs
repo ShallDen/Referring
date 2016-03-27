@@ -62,7 +62,7 @@ namespace Referring.Core
                 {
                     //Get synsets with restriction of part of speech
                     var translatedPOS = TransformPOS(pos.First());
-                    return new Set<SynSet>();
+                    return wordNetEngine.GetSynSets(word, translatedPOS);
                 }
             }
             catch (Exception ex)

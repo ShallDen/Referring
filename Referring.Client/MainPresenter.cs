@@ -28,9 +28,9 @@ namespace Referring.Client
             if(FileManager.IsExist(FileManager.FileFullPath))
             {
                 Logger.LogInfo("Opening file: " + FileManager.FileFullPath);
-                ReferringManager.OriginalText = FileManager.GetContent(FileManager.FileFullPath);
+                ReferringManager.Instance.OriginalText = FileManager.GetContent(FileManager.FileFullPath);
                 Logger.LogInfo("File was opened.");
-                view.SourceText = ReferringManager.OriginalText;
+                view.SourceText = ReferringManager.Instance.OriginalText;
                 view.FocusOnRunReferringButton();
             }
             else
@@ -42,7 +42,7 @@ namespace Referring.Client
 
         void view_FileSaveClick(object sender, RoutedEventArgs e)
         {
-            if (!ReferringManager.IsReferringCompete)
+            if (!ReferringManager.Instance.IsReferringCompete)
             {
                 MessageManager.ShowWarning("Please, perform referring process before saving summary.");
                 Logger.LogWarning("Please, perform referring process before saving summary.");
@@ -57,7 +57,7 @@ namespace Referring.Client
                 if(FileManager.IsExist(fileName))
                     FileManager.Delete(fileName);
 
-                FileManager.SaveContent(ReferringManager.ReferredText, fileName);
+                FileManager.SaveContent(ReferringManager.Instance.ReferredText, fileName);
                 MessageManager.ShowInformation("File was saved.");
                 Logger.LogInfo("File was saved.");
             }
@@ -70,8 +70,8 @@ namespace Referring.Client
 
         void view_CoefficientChanged(object sender, SelectionChangedEventArgs e)
         {
-            ReferringManager.ReferringCoefficient = (double)e.AddedItems[0];
-            Logger.LogInfo("Referring coefficient was changed. New value: " + ReferringManager.ReferringCoefficient);
+            ReferringManager.Instance.ReferringCoefficient = (double)e.AddedItems[0];
+            Logger.LogInfo("Referring coefficient was changed. New value: " + ReferringManager.Instance.ReferringCoefficient);
         }
 
         void view_RunRefferingClick(object sender, RoutedEventArgs e)
