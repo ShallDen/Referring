@@ -13,10 +13,8 @@ namespace Referring.Client
     {
         List<string> sentenceList = new List<string>();
         List<string> wordList = new List<string>();
-        List<string> goodWordList = new List<string>();
-
-        //Dictionary<string, int> sentenceDictionary = new Dictionary<string, int>();
-        //Dictionary<string, int> wordDictionary = new Dictionary<string, int>();
+       // List<string> goodWordList = new List<string>();
+        List<Word> goodWordList = new List<Word>();
 
         List<string> gooodPOSesList;
         List<string> restrictedWordsList;
@@ -69,7 +67,7 @@ namespace Referring.Client
                             continue;
                     }
 
-                    goodWordList.Add(word);
+                    //goodWordList.Add(new Word { Value = word, UsingCount = 0, Weight = 0 });
 
                     if (ReferringManager.Instance.IsStemmingForAllTextActivated)
                     {
@@ -80,27 +78,55 @@ namespace Referring.Client
                     synsets = GetSynsets(word, wordPOS);
 
                     //try to find synsets another one if there no synsets found
-                    if (!synsets.Any() && !ReferringManager.Instance.IsStemmingForAllTextActivated)
+                    if (synsets.Count == 0)
                     {
-                        word = Stemm(word);
-                        synsets = GetSynsets(word, wordPOS);
+                        if (!ReferringManager.Instance.IsStemmingForAllTextActivated)
+                        {
+                            word = Stemm(word);
+                            synsets = GetSynsets(word, wordPOS);
+                        }
 
-                        if (!synsets.Any())
+                        //if there no synsets found
+                        if (synsets.Count == 0)
+                        {
+                            AddWordWithCalculation(word, wordPOS);
                             continue;
+                        }
                     }
 
                     foreach (var synset in synsets)
                     {
                         var words = synset.Words;
                     }
-
+                    
 
                 }
             }
 
             var test = goodWordList.Distinct().ToList();
+
             MessageManager.ShowWarning("This feature isn't implemented yet!");
             Logger.LogWarning("This feature isn't implemented yet!");
+        }
+
+        private void AddWordWithCalculation(string word, string pos)
+        {
+            int usingCount = CalculateUsingCount(word);
+            int weight = usingCount;
+
+            if (!goodWordList.Select(c=>c.Value).Contains(word))
+            {
+                goodWordList.Add(new Word { Value = word, POS = pos, UsingCount = usingCount, Weight = weight });
+            }
+        }
+
+        private int CalculateUsingCount(string word)
+        {
+            return wordList.Where(c => c == word).Count();
+        }
+        private int CalculateWeight(string word)
+        {
+            return CalculateUsingCount(word);
         }
 
         private void InitializeRestrictedWords()
