@@ -67,7 +67,8 @@ namespace Referring.Client
                             continue;
                     }
 
-                    //goodWordList.Add(new Word { Value = word, UsingCount = 0, Weight = 0 });
+                    //add current word with using-count characteristics
+                    AddWordWithCalculation(word, wordPOS);
 
                     if (ReferringManager.Instance.IsStemmingForAllTextActivated)
                     {
@@ -86,17 +87,28 @@ namespace Referring.Client
                             synsets = GetSynsets(word, wordPOS);
                         }
 
-                        //if there no synsets found
+                        //no synsets are found, go to next word
                         if (synsets.Count == 0)
                         {
-                            AddWordWithCalculation(word, wordPOS);
                             continue;
                         }
                     }
 
-                    foreach (var synset in synsets)
+                    //synsets are founded, begin processing
+                   
+                    //take last synset
+                    
+                    var lastSynset = synsets.Last();
+
+                    //go to next word if there no synonyms in synset
+                    if (lastSynset.Words.Count == 1)
                     {
-                        var words = synset.Words;
+                        continue;
+                    }
+
+                    foreach (var item in lastSynset.Words)
+                    {
+
                     }
                     
 
@@ -122,7 +134,7 @@ namespace Referring.Client
 
         private int CalculateUsingCount(string word)
         {
-            return wordList.Where(c => c == word).Count();
+            return wordList.Where(c => Stemm(c) == Stemm(word)).Count();
         }
         private int CalculateWeight(string word)
         {
@@ -179,3 +191,13 @@ namespace Referring.Client
         }
     }
 }
+
+////////////////////////
+
+//Take the biggest counted synset without words wit underscore
+//var temp1 = synsets.Select(c => c.Words.Where(a=>!a.Contains("_")));
+//var temp2 = temp1.OrderByDescending(c => c.Count()).First();
+
+//var temp1 = synsets.Select(c => c.Words.Where(a => !a.Contains("_"))).OrderByDescending(c => c.Count()).First();
+
+///////////////////////

@@ -12,5 +12,10 @@ namespace Referring.Core
         public string POS { get; set; }
         public int UsingCount { get; set; }
         public int Weight { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}, {2}, {3}", Value, POS, UsingCount, Weight);
+        }
     }
 }
