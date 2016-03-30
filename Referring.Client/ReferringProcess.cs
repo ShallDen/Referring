@@ -13,8 +13,11 @@ namespace Referring.Client
     {
         List<string> sentenceList = new List<string>();
         List<string> wordList = new List<string>();
-       // List<string> goodWordList = new List<string>();
+        List<string> sentenceListOriginalCase = new List<string>();
+        List<string> wordListUpperOriginalCase = new List<string>();
+
         List<Word> goodWordList = new List<Word>();
+        List<Sentence> goodSentenceList = new List<Sentence>();
 
         List<string> gooodPOSesList;
         List<string> restrictedWordsList;
@@ -33,7 +36,7 @@ namespace Referring.Client
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList()
                 .ToLower();
-             
+
             wordList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
                 .DivideTextToWords()
                 .RemoveEmptyItemsInList()
@@ -48,10 +51,15 @@ namespace Referring.Client
                 //choose word
                 foreach (var wordVariable in wordsInSentence)
                 {
-                    string word = wordVariable;
+                    string word = string.Empty;
+                    string stemmedWord = string.Empty;
                     string wordPOS = string.Empty;
+
                     Set<SynSet> synsets = new Set<SynSet>();
                     Set<SynSet> synsetsWithPOS = new Set<SynSet>();
+
+                    word = wordVariable;
+                    stemmedWord = Stemm(word);
 
                     //skip for restricted words
                     if (IsWordRestricted(word))
@@ -72,7 +80,7 @@ namespace Referring.Client
 
                     if (ReferringManager.Instance.IsStemmingForAllTextActivated)
                     {
-                        word = Stemm(word);
+                        word = stemmedWord;
                     }
 
                     //synsets search
@@ -83,7 +91,7 @@ namespace Referring.Client
                     {
                         if (!ReferringManager.Instance.IsStemmingForAllTextActivated)
                         {
-                            word = Stemm(word);
+                            word = stemmedWord;
                             synsets = GetSynsets(word, wordPOS);
                         }
 
@@ -95,9 +103,9 @@ namespace Referring.Client
                     }
 
                     //synsets are founded, begin processing
-                   
+
                     //take last synset
-                    
+
                     var lastSynset = synsets.Last();
 
                     //go to next word if there no synonyms in synset
@@ -106,19 +114,111 @@ namespace Referring.Client
                         continue;
                     }
 
-                    foreach (var item in lastSynset.Words)
+                    foreach (var synword in lastSynset.Words)
                     {
+                        string stemmedSynword = Stemm(synword);
 
+                        if (stemmedSynword == stemmedWord)
+                        {
+                            continue;
+                        }
+
+                        if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
+                        {
+                            //TODO: think how to fix related weight problem //says, tells
+                            int usingCount = CalculateUsingCount(stemmedSynword);
+                            UpdateWordWeight(word, usingCount);
+                        }
                     }
-                    
+                }
 
+                goodSentenceList.Add(new Sentence { Value = sentence, Weight = 0 });
+            }
+
+            var showGoodList = goodWordList.OrderByDescending(c => c.Weight).ToList();
+
+
+            //Calculate sentences weight
+            foreach (var sentence in goodSentenceList)
+            {
+                var wordsInSentence = sentence.Value.DivideTextToWords();
+
+                //choose word
+                foreach (var wordVariable in wordsInSentence)
+                {
+                    string stemmedWord = Stemm(wordVariable);
+
+                    if (goodWordList.Select(c => Stemm(c.Value)).Contains(stemmedWord))
+                    {
+                        var searchWord = goodWordList.Where(c => Stemm(c.Value) == stemmedWord).FirstOrDefault();
+                        var searchSentence = goodSentenceList.Where(c => c.Value == sentence.Value).FirstOrDefault();
+                        searchSentence.Weight += searchWord.Weight;
+                    }
                 }
             }
 
-            var test = goodWordList.Distinct().ToList();
+            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
 
-            MessageManager.ShowWarning("This feature isn't implemented yet!");
-            Logger.LogWarning("This feature isn't implemented yet!");
+            int sentenceCount = goodSentenceList.Count;
+            int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
+
+            var requiredSentences = showGoodSentenceList.Take(requiredSentenceCount).ToList();
+
+            string essay = string.Empty;
+
+            sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
+                .DivideTextToSentences()
+                .ClearWhiteSpacesInList()
+                .RemoveEmptyItemsInList();
+
+
+            foreach (var sentence in goodSentenceList)
+            {
+                if(requiredSentences.Contains(sentence))
+                {
+                    if (!string.IsNullOrEmpty(essay))
+                    {
+                        essay = string.Format("{0} {1}. ", essay, sentence.Value);
+                    }
+                    else
+                    {
+                        essay = string.Format("{0}.", sentence.Value);
+                    }
+                }
+               // sentence.Value
+            }
+
+            ReferringManager.Instance.ReferredText = essay;
+            ReferringManager.Instance.IsReferringCompete = true;
+
+            MessageManager.ShowInformation("Referring complete! You can save essay to file.");
+        }
+
+        private void CalculateSentenceWeight(Sentence sentence)
+        {
+            
+        }
+
+        private void AddWord(string word, string pos, int usingCount, int weight)
+        {
+            string stemmedWord = Stemm(word);
+
+            if (!goodWordList.Select(c => Stemm(c.Value)).Contains(stemmedWord))
+            {
+                goodWordList.Add(new Word { Value = word, POS = pos, UsingCount = usingCount, Weight = weight });
+            }
+        }
+
+        private void UpdateWordWeight(string word, int usingCount)
+        {
+            string stemmedWord = Stemm(word);
+
+            if (goodWordList.Select(c => Stemm(c.Value)).Contains(stemmedWord))
+            {
+               // goodWordList.Weight += usingCount;
+                var searchWord = goodWordList.Where(c=>Stemm(c.Value) == stemmedWord).FirstOrDefault();
+                searchWord.Weight += usingCount;
+            }
         }
 
         private void AddWordWithCalculation(string word, string pos)
@@ -126,15 +226,13 @@ namespace Referring.Client
             int usingCount = CalculateUsingCount(word);
             int weight = usingCount;
 
-            if (!goodWordList.Select(c=>c.Value).Contains(word))
-            {
-                goodWordList.Add(new Word { Value = word, POS = pos, UsingCount = usingCount, Weight = weight });
-            }
+            AddWord(word, pos, usingCount, weight);
         }
 
         private int CalculateUsingCount(string word)
         {
-            return wordList.Where(c => Stemm(c) == Stemm(word)).Count();
+            string stemmedWord = Stemm(word);
+            return wordList.Where(c => Stemm(c) == stemmedWord).Count();
         }
         private int CalculateWeight(string word)
         {

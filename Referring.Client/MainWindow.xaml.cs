@@ -52,6 +52,7 @@ namespace Referring.Client
 
             ReferringManager.Instance.IsPOSDetectionActivated = true;
             ReferringManager.Instance.IsStemmingForAllTextActivated = true;
+            ReferringManager.Instance.ReferringCoefficient = 0.5;
 
             //TODO: Delete this code when development will be complete
             ///////////////////////
