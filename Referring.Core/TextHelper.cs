@@ -8,7 +8,7 @@ namespace Referring.Core
 {
     public static class TextHelper
     {
-        private static string[] sentenceSeparator = { ". ", "! ", "? ", "!? ", "?! " };
+        private static string[] sentenceSeparator = { ". ", "! ", "? ", "!? ", "?! ", ".\" ", "!\" ", "?\" " };
         private static string[] wordsSeparator = { " ", ".", "!", "?", "!?", "?!" };
 
         public static List<string> DivideTextToSentences(this string text)

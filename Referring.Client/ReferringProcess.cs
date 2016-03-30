@@ -42,6 +42,7 @@ namespace Referring.Client
                 .RemoveEmptyItemsInList()
                 .ToLower();
 
+            int sentenceIndex = 0;
 
             //choose sentence
             foreach (var sentence in sentenceList)
@@ -132,7 +133,8 @@ namespace Referring.Client
                     }
                 }
 
-                goodSentenceList.Add(new Sentence { Value = sentence, Weight = 0 });
+                ++sentenceIndex;
+                goodSentenceList.Add(new Sentence { Index = sentenceIndex, Value = sentence, Weight = 0 });
             }
 
             var showGoodList = goodWordList.OrderByDescending(c => c.Weight).ToList();
@@ -176,13 +178,14 @@ namespace Referring.Client
             {
                 if(requiredSentences.Contains(sentence))
                 {
+
                     if (!string.IsNullOrEmpty(essay))
                     {
-                        essay = string.Format("{0} {1}. ", essay, sentence.Value);
+                        essay = string.Format("{0} {1}. ", essay, sentenceListOriginalCase[sentence.Index-1]);
                     }
                     else
                     {
-                        essay = string.Format("{0}.", sentence.Value);
+                        essay = string.Format("{0}.", sentenceListOriginalCase[sentence.Index-1]);
                     }
                 }
                // sentence.Value
