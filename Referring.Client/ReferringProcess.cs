@@ -127,6 +127,8 @@ namespace Referring.Client
                         if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
                         {
                             //TODO: think how to fix related weight problem //says, tells
+
+                            //add weight to word from synwords
                             int usingCount = CalculateUsingCount(stemmedSynword);
                             UpdateWordWeight(word, usingCount);
                         }
@@ -138,7 +140,6 @@ namespace Referring.Client
             }
 
             var showGoodList = goodWordList.OrderByDescending(c => c.Weight).ToList();
-
 
             //Calculate sentences weight
             foreach (var sentence in goodSentenceList)
@@ -159,36 +160,38 @@ namespace Referring.Client
                 }
             }
 
+            //order sentences by weight
             var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
 
+            //calculate required sentence count
             int sentenceCount = goodSentenceList.Count;
             int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
 
+            //take required sentences with biggest weight 
             var requiredSentences = showGoodSentenceList.Take(requiredSentenceCount).ToList();
 
-            string essay = string.Empty;
-
+            //for good looking
             sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
                 .DivideTextToSentences()
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList();
 
+            string essay = string.Empty;
 
+            //build essay
             foreach (var sentence in goodSentenceList)
             {
-                if(requiredSentences.Contains(sentence))
+                if (requiredSentences.Contains(sentence))
                 {
-
                     if (!string.IsNullOrEmpty(essay))
                     {
-                        essay = string.Format("{0} {1}. ", essay, sentenceListOriginalCase[sentence.Index-1]);
+                        essay = string.Format("{0} {1}. ", essay, sentenceListOriginalCase[sentence.Index - 1]);
                     }
                     else
                     {
-                        essay = string.Format("{0}.", sentenceListOriginalCase[sentence.Index-1]);
+                        essay = string.Format("{0}.", sentenceListOriginalCase[sentence.Index - 1]);
                     }
                 }
-               // sentence.Value
             }
 
             ReferringManager.Instance.ReferredText = essay;
@@ -218,7 +221,6 @@ namespace Referring.Client
 
             if (goodWordList.Select(c => Stemm(c.Value)).Contains(stemmedWord))
             {
-               // goodWordList.Weight += usingCount;
                 var searchWord = goodWordList.Where(c=>Stemm(c.Value) == stemmedWord).FirstOrDefault();
                 searchWord.Weight += usingCount;
             }
