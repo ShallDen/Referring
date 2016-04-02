@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Referring.Core;
 using System.Windows.Controls;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace Referring.Client
 {
@@ -17,10 +18,25 @@ namespace Referring.Client
         {
             view = _view;
 
+            view.FileSelectClick += view_FileSelectClick;
             view.FileOpenClick += view_FileOpenClick;
             view.FileSaveClick += view_FileSaveClick;
             view.ReferringCoefficientChanged += view_CoefficientChanged;
             view.RunRefferingClick += view_RunRefferingClick;
+        }
+
+        void view_FileSelectClick(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Текстовые файлы|*.txt";
+
+            if (dlg.ShowDialog() == true)
+            {
+                FileManager.FileFullPath = dlg.FileName;
+                FileManager.FileName = dlg.SafeFileName;
+
+                view.FireFileOpenEvent(sender, e);
+            }
         }
 
         void view_FileOpenClick(object sender, RoutedEventArgs e)

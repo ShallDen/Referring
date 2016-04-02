@@ -66,13 +66,12 @@ namespace Referring.Client
             //build essay
             string essay = BuildEssay(requiredSentences);
 
-            //only for comfortable view
-            //order sentences by weight
-            var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
-            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
-
             ReferringManager.Instance.ReferredText = essay;
             ReferringManager.Instance.IsReferringCompete = true;
+
+            //order words and weights by weight only for comfortable view
+            var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
+            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
 
             MessageManager.ShowInformation("Referring complete! You can save essay to file.");
         }
@@ -252,7 +251,7 @@ namespace Referring.Client
                 if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
                 {
                     //add weight to word from synwords
-                    var usingCount = CalculateUsingCount(stemmedSynword);
+                    var usingCount = CalculateUsingCount(synword);
                     AddWordWeight(word, usingCount);
                 }
             }

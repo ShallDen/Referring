@@ -25,9 +25,11 @@ namespace Referring.Client
     public interface IMainWindow
     {
         string SourceText { get; set; }
+        void FireFileOpenEvent(object sender, RoutedEventArgs e);
         void FocusOnRunReferringButton();
         event RoutedEventHandler FileOpenClick;
         event RoutedEventHandler FileSaveClick;
+        event RoutedEventHandler FileSelectClick;
         event SelectionChangedEventHandler ReferringCoefficientChanged;
         event RoutedEventHandler RunRefferingClick;
     }
@@ -69,6 +71,7 @@ namespace Referring.Client
 
         public event RoutedEventHandler FileOpenClick;
         public event RoutedEventHandler FileSaveClick;
+        public event RoutedEventHandler FileSelectClick;
         public event SelectionChangedEventHandler ReferringCoefficientChanged;
         public event RoutedEventHandler RunRefferingClick;
 
@@ -80,19 +83,21 @@ namespace Referring.Client
 
         private static List<double> coefficients = new List<double> { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
 
+        public void FireFileOpenEvent(object sender, RoutedEventArgs e)
+        {
+            if (FileOpenClick != null)
+                FileOpenClick(this, e);
+        }
+
+        public void FocusOnRunReferringButton()
+        {
+            runReferringButton.Focus();
+        }
+
         void selectFileButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Filter = "Текстовые файлы|*.txt";
-
-            if (dlg.ShowDialog() == true)
-            {
-                FileManager.FileFullPath = dlg.FileName;
-                FileManager.FileName = dlg.SafeFileName;
-
-                if (FileOpenClick != null)
-                    FileOpenClick(this, e);
-            }
+            if (FileSelectClick != null)
+                FileSelectClick(sender, e);
         }
 
         void saveSummaryButton_Click(object sender, RoutedEventArgs e)
@@ -111,11 +116,6 @@ namespace Referring.Client
         {
             if (RunRefferingClick != null)
                 RunRefferingClick(sender, e);
-        }
-
-        public void FocusOnRunReferringButton()
-        {
-            runReferringButton.Focus();
         }
 
         private void FillReferringCoefficientCombobox()
