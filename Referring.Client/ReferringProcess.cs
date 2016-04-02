@@ -31,17 +31,54 @@ namespace Referring.Client
             InitializeRestrictedWords();
             InitializeGoodPOSes();
 
+            //get sentence list
             sentenceList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
                 .DivideTextToSentences()
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList()
                 .ToLower();
 
+            //get word list
             wordList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
                 .DivideTextToWords()
                 .RemoveEmptyItemsInList()
                 .ToLower();
 
+            //calculate word weights
+            CalculateWordWeights();
+
+            //calculate sentences weights
+            CalculateSentenceWeights();
+
+            //calculate required sentence count
+            int sentenceCount = goodSentenceList.Count;
+            int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
+
+            //take required sentences with biggest weight 
+            var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
+
+            //using original cases in essay
+            sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
+                .DivideTextToSentences()
+                .ClearWhiteSpacesInList()
+                .RemoveEmptyItemsInList();
+
+            //build essay
+            string essay = BuildEssay(requiredSentences);
+
+            //only for comfortable view
+            //order sentences by weight
+            var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
+            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
+
+            ReferringManager.Instance.ReferredText = essay;
+            ReferringManager.Instance.IsReferringCompete = true;
+
+            MessageManager.ShowInformation("Referring complete! You can save essay to file.");
+        }
+
+        private void CalculateWordWeights()
+        {
             int sentenceIndex = 0;
 
             //choose sentence
@@ -52,9 +89,9 @@ namespace Referring.Client
                 //choose word
                 foreach (var wordVariable in wordsInSentence)
                 {
-                    string word = string.Empty;
-                    string stemmedWord = string.Empty;
-                    string wordPOS = string.Empty;
+                    var word = string.Empty;
+                    var stemmedWord = string.Empty;
+                    var wordPOS = string.Empty;
 
                     var synsets = new List<SynSet>();
                     var synsetsWithPOS = new List<SynSet>();
@@ -110,40 +147,24 @@ namespace Referring.Client
                     }
 
                     ////////////
-                    //synsets are founded, begin processing
+                    //synsets are founded, begin updating
                     ////////////
 
-                    //take last synset
+                    //take required synset
                     var requiredSynset = GetRequiredSynset(synsets);
 
-                    foreach (var synword in requiredSynset.Words)
-                    {
-                        string stemmedSynword = string.Empty;
-
-                        //delete underscore symbols from synword if it consists of several words and not to stemm it
-                        stemmedSynword = !synword.Contains("_") ? Stemm(synword) : synword.Replace("_", " ");
-
-                        if (stemmedSynword == stemmedWord)
-                            continue;
-
-                        if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
-                        {
-                            //TODO: think how to fix related weight problem //says, tells
-
-                            //add weight to word from synwords
-                            int usingCount = CalculateUsingCount(stemmedSynword);
-                            UpdateWordWeight(word, usingCount);
-                        }
-                    }
+                    //update word weight from synword's using
+                    UpdateWordWeight(word, stemmedWord, requiredSynset);
                 }
 
                 ++sentenceIndex;
                 goodSentenceList.Add(new Sentence { Index = sentenceIndex, Value = sentence, Weight = 0 });
             }
+        }
 
-            var showGoodList = goodWordList.OrderByDescending(c => c.Weight).ToList();
-
-            //Calculate sentences weight
+        private void CalculateSentenceWeights()
+        {
+            //choose sentence
             foreach (var sentence in goodSentenceList)
             {
                 var wordsInSentence = sentence.Value.DivideTextToWords();
@@ -161,53 +182,6 @@ namespace Referring.Client
                     }
                 }
             }
-
-            //calculate required sentence count
-            int sentenceCount = goodSentenceList.Count;
-            int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
-
-            //take required sentences with biggest weight 
-            var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
-
-            //for good looking
-            sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
-                .DivideTextToSentences()
-                .ClearWhiteSpacesInList()
-                .RemoveEmptyItemsInList();
-
-            string essay = string.Empty;
-
-            //build essay
-            foreach (var sentence in goodSentenceList)
-            {
-                if (requiredSentences.Contains(sentence))
-                {
-                    if (!string.IsNullOrEmpty(essay))
-                    {
-                        essay = string.Format("{0} {1}. ", essay, sentenceListOriginalCase[sentence.Index - 1]);
-                    }
-                    else
-                    {
-                        essay = string.Format("{0}.", sentenceListOriginalCase[sentence.Index - 1]);
-                    }
-                }
-            }
-
-            //for comfortable view
-            //order sentences by weight
-            var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
-            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
-
-            ReferringManager.Instance.ReferredText = essay;
-            ReferringManager.Instance.IsReferringCompete = true;
-
-            MessageManager.ShowInformation("Referring complete! You can save essay to file.");
-        }
-
-        
-        private void CalculateSentenceWeight(Sentence sentence)
-        {
-            
         }
 
         private void AddWord(string word, string pos, int usingCount, int weight)
@@ -220,7 +194,7 @@ namespace Referring.Client
             }
         }
 
-        private void UpdateWordWeight(string word, int usingCount)
+        private void AddWordWeight(string word, int usingCount)
         {
             string stemmedWord = Stemm(word);
 
@@ -261,6 +235,49 @@ namespace Referring.Client
             }
 
             return requiredSynset;
+        }
+
+        private void UpdateWordWeight(string word, string stemmedWord, SynSet requiredSynset)
+        {
+            foreach (var synword in requiredSynset.Words)
+            {
+                string stemmedSynword = string.Empty;
+
+                //delete underscore symbols from synword if it consists of several words and not to stemm it
+                stemmedSynword = !synword.Contains("_") ? Stemm(synword) : synword.Replace("_", " ");
+
+                if (stemmedSynword == stemmedWord)
+                    continue;
+
+                if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
+                {
+                    //add weight to word from synwords
+                    var usingCount = CalculateUsingCount(stemmedSynword);
+                    AddWordWeight(word, usingCount);
+                }
+            }
+        }
+
+        private string BuildEssay(List<Sentence> requiredSentences)
+        {
+            string essay = string.Empty;
+
+            foreach (var sentence in goodSentenceList)
+            {
+                if (requiredSentences.Contains(sentence))
+                {
+                    if (!string.IsNullOrEmpty(essay))
+                    {
+                        essay = string.Format("{0} {1}. ", essay, sentenceListOriginalCase[sentence.Index - 1]);
+                    }
+                    else
+                    {
+                        essay = string.Format("{0}.", sentenceListOriginalCase[sentence.Index - 1]);
+                    }
+                }
+            }
+
+            return essay;
         }
 
         private void InitializeRestrictedWords()
