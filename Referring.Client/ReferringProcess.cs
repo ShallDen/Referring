@@ -62,6 +62,9 @@ namespace Referring.Client
                     word = wordVariable;
                     stemmedWord = Stemm(word);
 
+                    if (goodWordList.Select(c => Stemm(c.Value)).Contains(stemmedWord))
+                        continue;
+
                     //skip for restricted words
                     if (IsWordRestricted(word))
                         continue;
@@ -103,9 +106,7 @@ namespace Referring.Client
 
                         //no synsets are found even after stemming, go to next word
                         if (synsets.Count == 0)
-                        {
                             continue;
-                        }
                     }
 
                     ////////////
@@ -123,9 +124,7 @@ namespace Referring.Client
                         stemmedSynword = !synword.Contains("_") ? Stemm(synword) : synword.Replace("_", " ");
 
                         if (stemmedSynword == stemmedWord)
-                        {
                             continue;
-                        }
 
                         if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
                         {
@@ -163,15 +162,12 @@ namespace Referring.Client
                 }
             }
 
-            //order sentences by weight
-            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
-
             //calculate required sentence count
             int sentenceCount = goodSentenceList.Count;
             int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
 
             //take required sentences with biggest weight 
-            var requiredSentences = showGoodSentenceList.Take(requiredSentenceCount).ToList();
+            var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
 
             //for good looking
             sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
@@ -197,30 +193,18 @@ namespace Referring.Client
                 }
             }
 
+            //for comfortable view
+            //order sentences by weight
+            var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
+            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
+
             ReferringManager.Instance.ReferredText = essay;
             ReferringManager.Instance.IsReferringCompete = true;
 
             MessageManager.ShowInformation("Referring complete! You can save essay to file.");
         }
 
-        private SynSet GetRequiredSynset(List<SynSet> synsets)
-        {
-            var requiredSynset = synsets.Last();
-
-            for (int i = 1; i <= synsets.Count; i++)
-            {
-                int index = synsets.Count - i;
-                requiredSynset = synsets[index];
-
-                if (requiredSynset.Words.Count != 1)
-                {
-                    break;
-                }
-            }
-
-            return requiredSynset;
-        }
-
+        
         private void CalculateSentenceWeight(Sentence sentence)
         {
             
@@ -260,9 +244,23 @@ namespace Referring.Client
             string stemmedWord = Stemm(word);
             return wordList.Where(c => Stemm(c) == stemmedWord).Count();
         }
-        private int CalculateWeight(string word)
+
+        private SynSet GetRequiredSynset(List<SynSet> synsets)
         {
-            return CalculateUsingCount(word);
+            var requiredSynset = synsets.Last();
+
+            for (int i = 1; i <= synsets.Count; i++)
+            {
+                int index = synsets.Count - i;
+                requiredSynset = synsets[index];
+
+                if (requiredSynset.Words.Count != 1)
+                {
+                    break;
+                }
+            }
+
+            return requiredSynset;
         }
 
         private void InitializeRestrictedWords()
