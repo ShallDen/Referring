@@ -56,8 +56,8 @@ namespace Referring.Client
                     string stemmedWord = string.Empty;
                     string wordPOS = string.Empty;
 
-                    Set<SynSet> synsets = new Set<SynSet>();
-                    Set<SynSet> synsetsWithPOS = new Set<SynSet>();
+                    var synsets = new List<SynSet>();
+                    var synsetsWithPOS = new List<SynSet>();
 
                     word = wordVariable;
                     stemmedWord = Stemm(word);
@@ -76,7 +76,10 @@ namespace Referring.Client
                             continue;
                     }
 
+                    ////////////
                     //add current word with using-count characteristics
+                    ////////////
+
                     AddWordWithCalculation(word, wordPOS);
 
                     if (ReferringManager.Instance.IsStemmingForAllTextActivated)
@@ -84,7 +87,9 @@ namespace Referring.Client
                         word = stemmedWord;
                     }
 
+                    ////////////
                     //synsets search
+                    ////////////
                     synsets = GetSynsets(word, wordPOS);
 
                     //try to find synsets another one if there no synsets found
@@ -96,28 +101,26 @@ namespace Referring.Client
                             synsets = GetSynsets(word, wordPOS);
                         }
 
-                        //no synsets are found, go to next word
+                        //no synsets are found even after stemming, go to next word
                         if (synsets.Count == 0)
                         {
                             continue;
                         }
                     }
 
+                    ////////////
                     //synsets are founded, begin processing
+                    ////////////
 
                     //take last synset
+                    var requiredSynset = GetRequiredSynset(synsets);
 
-                    var lastSynset = synsets.Last();
-
-                    //go to next word if there no synonyms in synset
-                    if (lastSynset.Words.Count == 1)
+                    foreach (var synword in requiredSynset.Words)
                     {
-                        continue;
-                    }
+                        string stemmedSynword = string.Empty;
 
-                    foreach (var synword in lastSynset.Words)
-                    {
-                        string stemmedSynword = Stemm(synword);
+                        //delete underscore symbols from synword if it consists of several words and not to stemm it
+                        stemmedSynword = !synword.Contains("_") ? Stemm(synword) : synword.Replace("_", " ");
 
                         if (stemmedSynword == stemmedWord)
                         {
@@ -198,6 +201,24 @@ namespace Referring.Client
             ReferringManager.Instance.IsReferringCompete = true;
 
             MessageManager.ShowInformation("Referring complete! You can save essay to file.");
+        }
+
+        private SynSet GetRequiredSynset(List<SynSet> synsets)
+        {
+            var requiredSynset = synsets.Last();
+
+            for (int i = 1; i <= synsets.Count; i++)
+            {
+                int index = synsets.Count - i;
+                requiredSynset = synsets[index];
+
+                if (requiredSynset.Words.Count != 1)
+                {
+                    break;
+                }
+            }
+
+            return requiredSynset;
         }
 
         private void CalculateSentenceWeight(Sentence sentence)
@@ -281,15 +302,15 @@ namespace Referring.Client
             return Stemmer.Stemm(word);
         }
 
-        private Set<SynSet> GetSynsets(string word, params string[] pos)
+        private List<SynSet> GetSynsets(string word, params string[] pos)
         {
             if (ReferringManager.Instance.IsPOSDetectionActivated)
             {
-                return wordNetManager.GetSynSets(word, pos);
+                return wordNetManager.GetSynSets(word, pos).ToList();
             }
             else
             {
-                return wordNetManager.GetSynSets(word);
+                return wordNetManager.GetSynSets(word).ToList();
             }
         }
     }
