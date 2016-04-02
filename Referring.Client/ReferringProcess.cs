@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Referring.Core;
 using LAIR.Collections.Generic;
 using Referring.WordNet;
+using System.Diagnostics;
 
 namespace Referring.Client
 {
@@ -28,42 +29,47 @@ namespace Referring.Client
         {
             Logger.LogInfo("Starting referring process...");
 
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            Logger.LogInfo("Initialing restricted words and good POSes.");
             InitializeRestrictedWords();
             InitializeGoodPOSes();
 
-            //get sentence list
+            Logger.LogInfo("Getting sentence list.");
             sentenceList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
                 .DivideTextToSentences()
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList()
                 .ToLower();
 
-            //get word list
+            Logger.LogInfo("Getting word list.");
             wordList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
                 .DivideTextToWords()
                 .RemoveEmptyItemsInList()
                 .ToLower();
 
-            //calculate word weights
+            Logger.LogInfo("Calculate word weights.");
             CalculateWordWeights();
 
-            //calculate sentences weights
+            Logger.LogInfo("Calculating sentence weights.");
             CalculateSentenceWeights();
 
-            //calculate required sentence count
+            Logger.LogInfo("Calculating required sentence count.");
             int sentenceCount = goodSentenceList.Count;
             int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
+            Logger.LogInfo(string.Format("Required sentences: {0}.", requiredSentenceCount));
 
-            //take required sentences with biggest weight 
+            Logger.LogInfo("Taking required sentences with biggest weight.");
             var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
 
-            //using original cases in essay
+            Logger.LogInfo("Using original cases in essay.");
             sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
                 .DivideTextToSentences()
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList();
 
-            //build essay
+            Logger.LogInfo("Building the essay.");
             string essay = BuildEssay(requiredSentences);
 
             ReferringManager.Instance.ReferredText = essay;
@@ -73,7 +79,13 @@ namespace Referring.Client
             var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
             var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
 
-            MessageManager.ShowInformation("Referring complete! You can save essay to file.");
+            stopwatch.Stop();
+
+            var ts = stopwatch.Elapsed;
+            var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+
+            Logger.LogInfo("Referring completed. Elapsed time: " + elapsedTime);
+            MessageManager.ShowInformation("Referring completed! \nElapsed time: " + elapsedTime + "\nYou can save the essay to file.");
         }
 
         private void CalculateWordWeights()
@@ -115,10 +127,7 @@ namespace Referring.Client
                             continue;
                     }
 
-                    ////////////
                     //add current word with using-count characteristics
-                    ////////////
-
                     AddWordWithCalculation(word, wordPOS);
 
                     if (ReferringManager.Instance.IsStemmingForAllTextActivated)
@@ -126,9 +135,7 @@ namespace Referring.Client
                         word = stemmedWord;
                     }
 
-                    ////////////
-                    //synsets search
-                    ////////////
+                    //search synsets
                     synsets = GetSynsets(word, wordPOS);
 
                     //try to find synsets another one if there no synsets found
@@ -159,6 +166,8 @@ namespace Referring.Client
                 ++sentenceIndex;
                 goodSentenceList.Add(new Sentence { Index = sentenceIndex, Value = sentence, Weight = 0 });
             }
+
+            Logger.LogInfo("Word weights are calculated.");
         }
 
         private void CalculateSentenceWeights()
@@ -181,6 +190,8 @@ namespace Referring.Client
                     }
                 }
             }
+
+            Logger.LogInfo("Sentence weights are calculated.");
         }
 
         private void AddWord(string word, string pos, int usingCount, int weight)
@@ -195,6 +206,8 @@ namespace Referring.Client
 
         private void AddWordWeight(string word, int usingCount)
         {
+            Logger.LogInfo(string.Format("Adding {0} weight to word '{1}'.", usingCount, word));
+
             string stemmedWord = Stemm(word);
 
             if (goodWordList.Select(c => Stemm(c.Value)).Contains(stemmedWord))
@@ -252,7 +265,11 @@ namespace Referring.Client
                 {
                     //add weight to word from synwords
                     var usingCount = CalculateUsingCount(synword);
-                    AddWordWeight(word, usingCount);
+
+                    if (usingCount > 0)
+                    {
+                        AddWordWeight(word, usingCount);
+                    }
                 }
             }
         }
@@ -276,6 +293,7 @@ namespace Referring.Client
                 }
             }
 
+            Logger.LogInfo("Essay was built.");
             return essay;
         }
 

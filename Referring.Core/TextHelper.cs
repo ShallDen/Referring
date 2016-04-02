@@ -53,7 +53,6 @@ namespace Referring.Core
         public static List<string> RemoveEmptyItemsInList(this List<string> list)
         {
             var deletedItemsCount = list.RemoveAll(c=>string.IsNullOrWhiteSpace(c));
-            Logger.LogInfo("RemoveEmptyItemsInList: " + deletedItemsCount + " was deleted");
             return list;
         }
 

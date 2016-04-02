@@ -68,14 +68,15 @@ namespace Referring.Client
             if (FileManager.IsExist(FileManager.FileFullPath))
             {
                 string fileName = string.Concat(FileManager.FileDirectory + "Summary_" + FileManager.FileName);
-                Logger.LogInfo("Saving file: " + fileName);
+                Logger.LogInfo("Saving essay: " + fileName);
                 
                 if(FileManager.IsExist(fileName))
                     FileManager.Delete(fileName);
 
                 FileManager.SaveContent(ReferringManager.Instance.ReferredText, fileName);
-                MessageManager.ShowInformation("File was saved.");
-                Logger.LogInfo("File was saved.");
+
+                MessageManager.ShowInformation(string.Format("Essay was saved. You can find it at {0}", FileManager.FileDirectory));
+                Logger.LogInfo("Essay was saved.");
             }
             else
             {
