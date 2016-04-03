@@ -49,6 +49,8 @@ namespace Referring.Client
                 .RemoveEmptyItemsInList()
                 .ToLower();
 
+            Logger.LogInfo(string.Format("Text contains {0} sentences and {1} words.", sentenceList.Count, wordList.Count));
+
             Logger.LogInfo("Calculate word weights.");
             CalculateWordWeights();
 
@@ -82,7 +84,7 @@ namespace Referring.Client
             stopwatch.Stop();
 
             var ts = stopwatch.Elapsed;
-            var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+            var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
 
             Logger.LogInfo("Referring completed. Elapsed time: " + elapsedTime);
             MessageManager.ShowInformation("Referring completed! \nElapsed time: " + elapsedTime + "\nYou can save the essay to file.");

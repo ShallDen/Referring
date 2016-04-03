@@ -75,7 +75,7 @@ namespace Referring.Client
 
                 FileManager.SaveContent(ReferringManager.Instance.ReferredText, fileName);
 
-                MessageManager.ShowInformation(string.Format("Essay was saved. You can find it at {0}", FileManager.FileDirectory));
+                MessageManager.ShowInformation(string.Format("Essay was saved. \nYou can find it at {0}", FileManager.FileDirectory));
                 Logger.LogInfo("Essay was saved.");
             }
             else
