@@ -10,8 +10,8 @@ namespace Referring.Core
     public class ReferringManager : INotifyPropertyChanged 
     {
         private bool mIsPOSDetectionActivated;
-        private bool mIsStemmingForAllTextActivated;
-        private bool mIsStemmingIfNoSynsetsFoundActivated;
+        private bool mIsStemmingActivated;
+        private bool mIsWordNetActivated;
         private static ReferringManager instance;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -41,31 +41,49 @@ namespace Referring.Core
                 }
             }
         }
-        public bool IsStemmingForAllTextActivated
+
+        public bool IsStemmingActivated
         {
-            get { return mIsStemmingForAllTextActivated; }
+            get { return mIsStemmingActivated; }
             set
             {
-                if (mIsStemmingForAllTextActivated != value)
+                if (mIsStemmingActivated != value)
                 {
-                    mIsStemmingForAllTextActivated = value;
+                    mIsStemmingActivated = value;
                     if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("IsStemmingForAllTextActivated"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsStemmingActivated"));
                 }
             }
         }
-        public bool IsStemmingIfNoSynsetsFoundActivated
+
+        public bool IsWordNetActivated
         {
-            get { return mIsStemmingIfNoSynsetsFoundActivated; }
+            get { return mIsWordNetActivated; }
             set
             {
-                if (mIsStemmingIfNoSynsetsFoundActivated != value)
+                if (mIsWordNetActivated != value)
                 {
-                    mIsStemmingIfNoSynsetsFoundActivated = value;
+                    mIsWordNetActivated = value;
                     if (PropertyChanged != null)
-                        PropertyChanged(this, new PropertyChangedEventArgs("IsStemmingIfNoSynsetsFoundActivated"));
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsWordNetActivated"));
                 }
             }
         }
     }
 }
+
+//private bool mIsStemmingIfNoSynsetsFoundActivated;
+
+//public bool IsStemmingIfNoSynsetsFoundActivated
+//{
+//    get { return mIsStemmingIfNoSynsetsFoundActivated; }
+//    set
+//    {
+//        if (mIsStemmingIfNoSynsetsFoundActivated != value)
+//        {
+//            mIsStemmingIfNoSynsetsFoundActivated = value;
+//            if (PropertyChanged != null)
+//                PropertyChanged(this, new PropertyChangedEventArgs("IsStemmingIfNoSynsetsFoundActivated"));
+//        }
+//    }
+//}

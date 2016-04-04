@@ -51,9 +51,11 @@ namespace Referring.Client
 
             usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
             useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
+            useWordNet.DataContext = ReferringManager.Instance;
 
             ReferringManager.Instance.IsPOSDetectionActivated = true;
-            ReferringManager.Instance.IsStemmingForAllTextActivated = true;
+            ReferringManager.Instance.IsStemmingActivated = true;
+            ReferringManager.Instance.IsWordNetActivated = true;
             ReferringManager.Instance.ReferringCoefficient = 0.5;
 
             //TODO: Delete this code when development will be complete

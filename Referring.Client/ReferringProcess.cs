@@ -27,67 +27,75 @@ namespace Referring.Client
 
         public void RunReferrengProcess()
         {
-            Logger.LogInfo("Starting referring process...");
+            try
+            {
+                Logger.LogInfo("Starting referring process...");
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
 
-            Logger.LogInfo("Initialing restricted words and good POSes.");
-            InitializeRestrictedWords();
-            InitializeGoodPOSes();
+                Logger.LogInfo("Initialing restricted words and good POSes.");
+                InitializeRestrictedWords();
+                InitializeGoodPOSes();
 
-            Logger.LogInfo("Getting sentence list.");
-            sentenceList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
-                .DivideTextToSentences()
-                .ClearWhiteSpacesInList()
-                .RemoveEmptyItemsInList()
-                .ToLower();
+                Logger.LogInfo("Getting sentence list.");
+                sentenceList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
+                    .DivideTextToSentences()
+                    .ClearWhiteSpacesInList()
+                    .RemoveEmptyItemsInList()
+                    .ToLower();
 
-            Logger.LogInfo("Getting word list.");
-            wordList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
-                .DivideTextToWords()
-                .RemoveEmptyItemsInList()
-                .ToLower();
+                Logger.LogInfo("Getting word list.");
+                wordList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
+                    .DivideTextToWords()
+                    .RemoveEmptyItemsInList()
+                    .ToLower();
 
-            Logger.LogInfo(string.Format("Text contains {0} sentences and {1} words.", sentenceList.Count, wordList.Count));
+                Logger.LogInfo(string.Format("Text contains {0} sentences and {1} words.", sentenceList.Count, wordList.Count));
 
-            Logger.LogInfo("Calculate word weights.");
-            CalculateWordWeights();
+                Logger.LogInfo("Calculate word weights.");
+                CalculateWordWeights();
 
-            Logger.LogInfo("Calculating sentence weights.");
-            CalculateSentenceWeights();
+                Logger.LogInfo("Calculating sentence weights.");
+                CalculateSentenceWeights();
 
-            Logger.LogInfo("Calculating required sentence count.");
-            int sentenceCount = goodSentenceList.Count;
-            int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
-            Logger.LogInfo(string.Format("Required sentences: {0}.", requiredSentenceCount));
+                Logger.LogInfo("Calculating required sentence count.");
+                int sentenceCount = goodSentenceList.Count;
+                int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
+                Logger.LogInfo(string.Format("Required sentences: {0}.", requiredSentenceCount));
 
-            Logger.LogInfo("Taking required sentences with biggest weight.");
-            var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
+                Logger.LogInfo("Taking required sentences with biggest weight.");
+                var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
 
-            Logger.LogInfo("Using original cases in essay.");
-            sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
-                .DivideTextToSentences()
-                .ClearWhiteSpacesInList()
-                .RemoveEmptyItemsInList();
+                Logger.LogInfo("Using original cases in essay.");
+                sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
+                    .DivideTextToSentences()
+                    .ClearWhiteSpacesInList()
+                    .RemoveEmptyItemsInList();
 
-            Logger.LogInfo("Building the essay.");
-            string essay = BuildEssay(requiredSentences);
+                Logger.LogInfo("Building the essay.");
+                string essay = BuildEssay(requiredSentences);
 
-            ReferringManager.Instance.ReferredText = essay;
-            ReferringManager.Instance.IsReferringCompete = true;
+                ReferringManager.Instance.ReferredText = essay;
+                ReferringManager.Instance.IsReferringCompete = true;
 
-            //order words and weights by weight only for comfortable view
-            var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
-            var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
+                //order words and weights by weight only for comfortable view
+                var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
+                var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
 
-            stopwatch.Stop();
+                stopwatch.Stop();
 
-            var ts = stopwatch.Elapsed;
-            var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+                var ts = stopwatch.Elapsed;
+                var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
 
-            Logger.LogInfo("Referring completed. Elapsed time: " + elapsedTime);
-            MessageManager.ShowInformation("Referring completed! \nElapsed time: " + elapsedTime + "\nYou can save the essay to file.");
+                Logger.LogInfo("Referring completed. Elapsed time: " + elapsedTime);
+                MessageManager.ShowInformation("Referring completed! \nElapsed time: " + elapsedTime + "\nYou can save the essay to file.");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Here is some problem..." + ex);
+                MessageManager.ShowError("Here is some problem..." + ex);
+            }
         }
 
         private void CalculateWordWeights()
@@ -132,7 +140,7 @@ namespace Referring.Client
                     //add current word with using-count characteristics
                     AddWordWithCalculation(word, wordPOS);
 
-                    if (ReferringManager.Instance.IsStemmingForAllTextActivated)
+                    if (ReferringManager.Instance.IsStemmingActivated)
                     {
                         word = stemmedWord;
                     }
@@ -143,7 +151,7 @@ namespace Referring.Client
                     //try to find synsets another one if there no synsets found
                     if (synsets.Count == 0)
                     {
-                        if (!ReferringManager.Instance.IsStemmingForAllTextActivated)
+                        if (!ReferringManager.Instance.IsStemmingActivated)
                         {
                             word = stemmedWord;
                             synsets = GetSynsets(word, wordPOS);
@@ -154,9 +162,7 @@ namespace Referring.Client
                             continue;
                     }
 
-                    ////////////
-                    //synsets are founded, begin updating
-                    ////////////
+                    //synsets are found, begin updating
 
                     //take required synset
                     var requiredSynset = GetRequiredSynset(synsets);
