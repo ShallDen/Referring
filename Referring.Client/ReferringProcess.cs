@@ -83,6 +83,8 @@ namespace Referring.Client
                 var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
                 var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
 
+                ReferringManager.Instance.OrderedWordList = showGoodWordList;
+
                 stopwatch.Stop();
 
                 var ts = stopwatch.Elapsed;
@@ -112,7 +114,7 @@ namespace Referring.Client
                 {
                     var word = string.Empty;
                     var stemmedWord = string.Empty;
-                    var wordPOS = string.Empty;
+                    var wordPOS = "-";
 
                     var synsets = new List<SynSet>();
                     var synsetsWithPOS = new List<SynSet>();
@@ -139,6 +141,10 @@ namespace Referring.Client
 
                     //add current word with using-count characteristics
                     AddWordWithCalculation(word, wordPOS);
+
+                    //Skip next steps if WordNet isn't activated
+                    if (!ReferringManager.Instance.IsWordNetActivated)
+                        continue;
 
                     if (ReferringManager.Instance.IsStemmingActivated)
                     {

@@ -52,11 +52,14 @@ namespace Referring.Client
             usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
             useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
             useWordNet.DataContext = ReferringManager.Instance;
+            wordGrid.DataContext = ReferringManager.Instance;
 
             ReferringManager.Instance.IsPOSDetectionActivated = true;
             ReferringManager.Instance.IsStemmingActivated = true;
             ReferringManager.Instance.IsWordNetActivated = true;
             ReferringManager.Instance.ReferringCoefficient = 0.5;
+
+            ChangeCollapseMode();
 
             //TODO: Delete this code when development will be complete
             ///////////////////////
@@ -82,8 +85,36 @@ namespace Referring.Client
             get { return inputTextBox.Text; }
             set { inputTextBox.Text = value; }
         }
+        public bool IsCollapsed { get; set; }
 
         private static List<double> coefficients = new List<double> { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
+
+        public void FocusOnRunReferringButton()
+        {
+            runReferringButton.Focus();
+        }
+
+        private void FillReferringCoefficientCombobox()
+        {
+            referringCoefficientCombobox.ItemsSource = coefficients;
+            referringCoefficientCombobox.SelectedIndex = coefficients.Count / 2;
+        }
+
+        private void ChangeCollapseMode()
+        {
+            if (this.IsCollapsed)
+            {
+                this.Width = 1003;
+                this.IsCollapsed = false;
+                this.showWordList.Content = "Спрятать список";
+            }
+            else
+            {
+                this.Width = 661;
+                this.IsCollapsed = true;
+                this.showWordList.Content = "Отобразить список";
+            }
+        }
 
         public void FireFileOpenEvent(object sender, RoutedEventArgs e)
         {
@@ -91,10 +122,6 @@ namespace Referring.Client
                 FileOpenClick(this, e);
         }
 
-        public void FocusOnRunReferringButton()
-        {
-            runReferringButton.Focus();
-        }
 
         void selectFileButton_Click(object sender, RoutedEventArgs e)
         {
@@ -120,15 +147,14 @@ namespace Referring.Client
                 RunRefferingClick(sender, e);
         }
 
-        private void FillReferringCoefficientCombobox()
-        {
-            referringCoefficientCombobox.ItemsSource = coefficients;
-            referringCoefficientCombobox.SelectedIndex = coefficients.Count / 2;
-        }
-
         private void MainForm_Loaded(object sender, RoutedEventArgs e)
         {
             Logger.LogInfo("Main window was loaded.");
+        }
+
+        private void showWordList_Click(object sender, RoutedEventArgs e)
+        {
+            ChangeCollapseMode();
         }
     }
 }

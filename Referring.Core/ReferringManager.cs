@@ -12,6 +12,7 @@ namespace Referring.Core
         private bool mIsPOSDetectionActivated;
         private bool mIsStemmingActivated;
         private bool mIsWordNetActivated;
+        private List<Word> mOrderedWordList;
         private static ReferringManager instance;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -66,6 +67,20 @@ namespace Referring.Core
                     mIsWordNetActivated = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("IsWordNetActivated"));
+                }
+            }
+        }
+
+        public List<Word> OrderedWordList
+        {
+            get { return mOrderedWordList; }
+            set
+            {
+                if (mOrderedWordList != value)
+                {
+                    mOrderedWordList = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("OrderedWordList"));
                 }
             }
         }
