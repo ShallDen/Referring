@@ -80,7 +80,7 @@ namespace Referring.Client
                 ReferringManager.Instance.IsReferringCompete = true;
 
                 //order words and weights by weight only for comfortable view
-                var showGoodWordList = goodWordList.OrderByDescending(c => c.Weight).ToList();
+                var showGoodWordList = goodWordList.TransformPOSToRussian().OrderByDescending(c => c.Weight).ToList();
                 var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
 
                 ReferringManager.Instance.OrderedWordList = showGoodWordList;

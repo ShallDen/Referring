@@ -60,5 +60,14 @@ namespace Referring.Core
         {
             return list.Select(c => c.ToLower()).ToList();
         }
+
+        public static List<Word> TransformPOSToRussian(this List<Word> list)
+        {
+            foreach (var word in list)
+            {
+                word.POS = Tagger.TransformPOSToRussian(word.POS);
+            }
+            return list;
+        }
     }
 }
