@@ -23,9 +23,11 @@ namespace Referring.Client
             view.FileSaveClick += view_FileSaveClick;
             view.ReferringCoefficientChanged += view_CoefficientChanged;
             view.RunRefferingClick += view_RunRefferingClick;
+            view.ShowEssayClick += view_ShowEssayClick;
+            view.ChangeCollapseModeClick += view_ChangeCollapseModeClick;
         }
 
-        void view_FileSelectClick(object sender, RoutedEventArgs e)
+        private void view_FileSelectClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = "Текстовые файлы|*.txt";
@@ -39,7 +41,7 @@ namespace Referring.Client
             }
         }
 
-        void view_FileOpenClick(object sender, RoutedEventArgs e)
+        private void view_FileOpenClick(object sender, RoutedEventArgs e)
         {
             if(FileManager.IsExist(FileManager.FileFullPath))
             {
@@ -56,7 +58,7 @@ namespace Referring.Client
             }
         }
 
-        void view_FileSaveClick(object sender, RoutedEventArgs e)
+        private void view_FileSaveClick(object sender, RoutedEventArgs e)
         {
             if (!ReferringManager.Instance.IsReferringCompete)
             {
@@ -85,16 +87,26 @@ namespace Referring.Client
             }
         }
 
-        void view_CoefficientChanged(object sender, SelectionChangedEventArgs e)
+        private void view_CoefficientChanged(object sender, SelectionChangedEventArgs e)
         {
             ReferringManager.Instance.ReferringCoefficient = (double)e.AddedItems[0];
             Logger.LogInfo("Referring coefficient was changed. New value: " + ReferringManager.Instance.ReferringCoefficient);
         }
 
-        void view_RunRefferingClick(object sender, RoutedEventArgs e)
+        private void view_RunRefferingClick(object sender, RoutedEventArgs e)
         {
             ReferringProcess referring = new ReferringProcess();
             referring.RunReferrengProcess();
+        }
+
+        private void view_ShowEssayClick(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void view_ChangeCollapseModeClick(object sender, RoutedEventArgs e)
+        {
+            view.ChangeCollapseMode();
         }
     }
 }

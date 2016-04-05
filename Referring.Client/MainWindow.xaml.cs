@@ -27,11 +27,14 @@ namespace Referring.Client
         string SourceText { get; set; }
         void FireFileOpenEvent(object sender, RoutedEventArgs e);
         void FocusOnRunReferringButton();
+        void ChangeCollapseMode();
         event RoutedEventHandler FileOpenClick;
         event RoutedEventHandler FileSaveClick;
         event RoutedEventHandler FileSelectClick;
         event SelectionChangedEventHandler ReferringCoefficientChanged;
         event RoutedEventHandler RunRefferingClick;
+        event RoutedEventHandler ShowEssayClick;
+        event RoutedEventHandler ChangeCollapseModeClick;
     }
 
     public partial class MainWindow : Window, IMainWindow
@@ -42,11 +45,13 @@ namespace Referring.Client
             InitializeComponent();
             FillReferringCoefficientCombobox();
 
-            selectFileButton.Click += selectFileButton_Click;
-            saveSummaryButton.Click += saveSummaryButton_Click;
-            referringCoefficientCombobox.SelectionChanged += coefficientCombobox_SelectionChanged;
-            runReferringButton.Click += runReferringButton_Click;
-
+            selectFileButton.Click += SelectFileButton_Click;
+            referringCoefficientCombobox.SelectionChanged += CoefficientCombobox_SelectionChanged;
+            runReferringButton.Click += RunReferringButton_Click;
+            showEssayButton.Click += ShowEssayButton_Click;
+            saveEssayButton.Click += SaveEssayButton_Click;
+            changeCollapseModeButton.Click += ChangeCollapseModeButton_Click;
+            
             MainPresenter presenter = new MainPresenter(this);
 
             usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
@@ -79,12 +84,15 @@ namespace Referring.Client
         public event RoutedEventHandler FileSelectClick;
         public event SelectionChangedEventHandler ReferringCoefficientChanged;
         public event RoutedEventHandler RunRefferingClick;
+        public event RoutedEventHandler ShowEssayClick;
+        public event RoutedEventHandler ChangeCollapseModeClick;
 
         public string SourceText
         {
             get { return inputTextBox.Text; }
             set { inputTextBox.Text = value; }
         }
+
         public bool IsCollapsed { get; set; }
 
         private static List<double> coefficients = new List<double> { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
@@ -94,26 +102,26 @@ namespace Referring.Client
             runReferringButton.Focus();
         }
 
-        private void FillReferringCoefficientCombobox()
-        {
-            referringCoefficientCombobox.ItemsSource = coefficients;
-            referringCoefficientCombobox.SelectedIndex = coefficients.Count / 2;
-        }
-
-        private void ChangeCollapseMode()
+        public void ChangeCollapseMode()
         {
             if (this.IsCollapsed)
             {
                 this.Width = 1003;
                 this.IsCollapsed = false;
-                this.showWordList.Content = "<<";
+                this.changeCollapseModeButton.Content = "<<";
             }
             else
             {
                 this.Width = 661;
                 this.IsCollapsed = true;
-                this.showWordList.Content = ">>";
+                this.changeCollapseModeButton.Content = ">>";
             }
+        }
+
+        private void FillReferringCoefficientCombobox()
+        {
+            referringCoefficientCombobox.ItemsSource = coefficients;
+            referringCoefficientCombobox.SelectedIndex = coefficients.Count / 2;
         }
 
         public void FireFileOpenEvent(object sender, RoutedEventArgs e)
@@ -122,39 +130,45 @@ namespace Referring.Client
                 FileOpenClick(this, e);
         }
 
-
-        void selectFileButton_Click(object sender, RoutedEventArgs e)
+        private void SelectFileButton_Click(object sender, RoutedEventArgs e)
         {
             if (FileSelectClick != null)
                 FileSelectClick(sender, e);
         }
 
-        void saveSummaryButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (FileSaveClick != null)
-                FileSaveClick(sender, e);
-        }
-
-        void coefficientCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void CoefficientCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ReferringCoefficientChanged != null)
                 ReferringCoefficientChanged(sender, e);
         }
 
-        void runReferringButton_Click(object sender, RoutedEventArgs e)
+        private void ShowEssayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ShowEssayClick != null)
+                ShowEssayClick(sender, e);
+        }
+
+        private void SaveEssayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FileSaveClick != null)
+                FileSaveClick(sender, e);
+        }
+
+        private void RunReferringButton_Click(object sender, RoutedEventArgs e)
         {
             if (RunRefferingClick != null)
                 RunRefferingClick(sender, e);
         }
 
+        private void ChangeCollapseModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ChangeCollapseModeClick != null)
+                ChangeCollapseModeClick(sender, e);
+        }
+
         private void MainForm_Loaded(object sender, RoutedEventArgs e)
         {
             Logger.LogInfo("Main window was loaded.");
-        }
-
-        private void showWordList_Click(object sender, RoutedEventArgs e)
-        {
-            ChangeCollapseMode();
         }
     }
 }
