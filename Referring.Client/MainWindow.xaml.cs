@@ -106,13 +106,13 @@ namespace Referring.Client
             {
                 this.Width = 1003;
                 this.IsCollapsed = false;
-                this.showWordList.Content = "Спрятать список";
+                this.showWordList.Content = "<<";
             }
             else
             {
                 this.Width = 661;
                 this.IsCollapsed = true;
-                this.showWordList.Content = "Отобразить список";
+                this.showWordList.Content = ">>";
             }
         }
 

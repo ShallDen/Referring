@@ -19,25 +19,26 @@
         <Label x:Name="wordsTextBox" Content="Список слов:" HorizontalAlignment="Left" Margin="654,10,0,0" VerticalAlignment="Top" Height="22" Width="86"/>
         <Label x:Name="sourceTextTextBox" Content="Исходный текст:" Margin="18,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="101"/>
 
-        <GroupBox Header="Настройки реферирования" Margin="23,319,0,0" Padding="5" Height="167" VerticalAlignment="Top" HorizontalAlignment="Left" Width="403" BorderBrush="#FF61B9E2" BorderThickness="1">
+        <GroupBox Header="Настройки реферирования" Margin="23,319,0,0" Padding="5" Height="167" VerticalAlignment="Top" HorizontalAlignment="Left" Width="306" BorderBrush="#FF61B9E2" BorderThickness="1">
             <Grid Margin="0,0,-12,-22" Height="186" VerticalAlignment="Top">
                 <CheckBox x:Name="usePOSDetectionCheckBox"
-                    IsChecked="{Binding Path=IsPOSDetectionActivated, UpdateSourceTrigger=PropertyChanged}" Margin="9,72,133,0" Height="15" VerticalAlignment="Top">Использовать определение частей речи</CheckBox>
+                    IsChecked="{Binding Path=IsPOSDetectionActivated, UpdateSourceTrigger=PropertyChanged}" Margin="9,72,41,0" Height="15" VerticalAlignment="Top">Использовать определение частей речи</CheckBox>
                 <CheckBox x:Name="useStemmingForAllTextCheckBox" Margin="9,94,0,0" 
                 	IsChecked="{Binding IsStemmingActivated, UpdateSourceTrigger=PropertyChanged}" Content="Использовать стемминг" HorizontalAlignment="Left" Height="16" VerticalAlignment="Top"/>
                 <CheckBox x:Name="useWordNet" Margin="9,115,0,0" 
                 	IsChecked="{Binding IsWordNetActivated, UpdateSourceTrigger=PropertyChanged}" Content="Использовать WordNet" HorizontalAlignment="Left" Height="15" VerticalAlignment="Top"/>
-                <Label Content="Выберите коэфф-т реферирования:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="199" Margin="174,1,0,0"></Label>
-                <ComboBox x:Name="referringCoefficientCombobox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="187" Height="26" Margin="179,27,0,0" FontFamily="Comic Sans MS" FontSize="11" Background="{x:Null}" VerticalContentAlignment="Center"/>
-                <Label Content="Выберите текстовый файл:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="24" Width="166"/>
-                <Button x:Name="selectFileButton" Content="Выбрать файл" HorizontalAlignment="Left" VerticalAlignment="Top" Width="131" Height="26" Margin="9,27,0,0" Background="{x:Null}"/>
+                <Label Content="Коэфф. реферирования:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="150" Margin="133,1,0,0"></Label>
+                <ComboBox x:Name="referringCoefficientCombobox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="128" Height="26" Margin="138,27,0,0" FontFamily="Comic Sans MS" FontSize="11" Background="{x:Null}" VerticalContentAlignment="Center"/>
+                <Label Content="Текстовый файл:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="24" Width="105" Margin="13,0,0,0"/>
+                <Button x:Name="selectFileButton" Content="Выбрать файл" HorizontalAlignment="Left" VerticalAlignment="Top" Width="110" Height="26" Margin="9,27,0,0" Background="{x:Null}"/>
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="groupBox" Header="Действия:" HorizontalAlignment="Left" Margin="451,319,0,0" VerticalAlignment="Top" Height="167" Width="178" BorderBrush="#FF61B9E2" BorderThickness="1">
+        <GroupBox x:Name="groupBox" Header="Действия:" HorizontalAlignment="Left" Margin="363,319,0,0" VerticalAlignment="Top" Height="167" Width="266" BorderBrush="#FF61B9E2" BorderThickness="1">
             <Grid>
-                <Button x:Name="runReferringButton" Content="Реферировать" HorizontalAlignment="Left" VerticalAlignment="Top" Width="131" Height="37" Margin="18,6,0,0"  Background="{x:Null}" BorderBrush="Black"/>
-                <Button x:Name="saveSummaryButton" Content="Сохранить реферат" HorizontalAlignment="Left" Margin="18,53,0,0" VerticalAlignment="Top" Width="131" Height="37" Background="{x:Null}" BorderBrush="Black"/>
-                <Button x:Name="showWordList" Content="Отобразить список" HorizontalAlignment="Left" Margin="18,100,0,0" VerticalAlignment="Top" Width="131" Height="37" Background="{x:Null}" BorderBrush="Black" Click="showWordList_Click"/>
+                <Button x:Name="runReferringButton" Content="Реферировать" HorizontalAlignment="Left" VerticalAlignment="Top" Width="131" Height="37" Margin="33,8,0,0"  Background="{x:Null}" BorderBrush="Black"/>
+                <Button x:Name="showEssay" Content="Показать реферат" HorizontalAlignment="Left" Margin="33,54,0,0" VerticalAlignment="Top" Width="131" Height="37" BorderBrush="Black" Background="{x:Null}"/>
+                <Button x:Name="saveSummaryButton" Content="Сохранить реферат" HorizontalAlignment="Left" Margin="33,99,0,0" VerticalAlignment="Top" Width="131" Height="37" Background="{x:Null}" BorderBrush="Black"/>
+                <Button x:Name="showWordList" Content=">>" HorizontalAlignment="Left" Margin="202,8,0,0" VerticalAlignment="Top" Width="37" Height="128" Background="{x:Null}" BorderBrush="Black" Click="showWordList_Click"/>
             </Grid>
         </GroupBox>
     </Grid>
