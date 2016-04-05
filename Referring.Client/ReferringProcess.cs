@@ -78,12 +78,11 @@ namespace Referring.Client
 
                 ReferringManager.Instance.ReferredText = essay;
                 ReferringManager.Instance.IsReferringCompete = true;
+                ReferringManager.Instance.OrderedWordList = goodWordList.TransformPOSToRussian().OrderByDescending(c => c.Weight).ToList();
 
                 //order words and weights by weight only for comfortable view
-                var showGoodWordList = goodWordList.TransformPOSToRussian().OrderByDescending(c => c.Weight).ToList();
+                var showGoodWordList = ReferringManager.Instance.OrderedWordList;
                 var showGoodSentenceList = goodSentenceList.OrderByDescending(c => c.Weight).ToList();
-
-                ReferringManager.Instance.OrderedWordList = showGoodWordList;
 
                 stopwatch.Stop();
 

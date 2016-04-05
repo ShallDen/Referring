@@ -100,7 +100,12 @@ namespace Referring.Client
 
         private void view_ShowEssayClick(object sender, RoutedEventArgs e)
         {
-            
+            if (!ReferringManager.Instance.IsReferringCompete)
+            {
+                MessageManager.ShowWarning("Please, perform referring process before saving summary.");
+                Logger.LogWarning("Please, perform referring process before saving summary.");
+                return;
+            }
         }
 
         private void view_ChangeCollapseModeClick(object sender, RoutedEventArgs e)
