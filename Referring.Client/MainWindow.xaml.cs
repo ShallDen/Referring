@@ -24,7 +24,6 @@ namespace Referring.Client
     /// 
     public interface IMainWindow
     {
-        string SourceText { get; set; }
         void FireFileOpenEvent(object sender, RoutedEventArgs e);
         void FocusOnRunReferringButton();
         void ChangeCollapseMode();
@@ -54,6 +53,7 @@ namespace Referring.Client
             
             MainPresenter presenter = new MainPresenter(this);
 
+            inputTextBox.DataContext = ReferringManager.Instance;
             usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
             useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
             useWordNet.DataContext = ReferringManager.Instance;
@@ -87,11 +87,6 @@ namespace Referring.Client
         public event RoutedEventHandler ShowEssayClick;
         public event RoutedEventHandler ChangeCollapseModeClick;
 
-        public string SourceText
-        {
-            get { return inputTextBox.Text; }
-            set { inputTextBox.Text = value; }
-        }
 
         public bool IsCollapsed { get; set; }
 

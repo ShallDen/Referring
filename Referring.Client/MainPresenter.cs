@@ -48,7 +48,6 @@ namespace Referring.Client
                 Logger.LogInfo("Opening file: " + FileManager.FileFullPath);
                 ReferringManager.Instance.OriginalText = FileManager.GetContent(FileManager.FileFullPath);
                 Logger.LogInfo("File was opened.");
-                view.SourceText = ReferringManager.Instance.OriginalText;
                 view.FocusOnRunReferringButton();
             }
             else

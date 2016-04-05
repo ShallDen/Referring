@@ -9,6 +9,8 @@ namespace Referring.Core
 {
     public class ReferringManager : INotifyPropertyChanged 
     {
+        private string mOriginalText;
+        private string mReferredText;
         private bool mIsPOSDetectionActivated;
         private bool mIsStemmingActivated;
         private bool mIsWordNetActivated;
@@ -19,14 +21,40 @@ namespace Referring.Core
 
         protected ReferringManager() { }
 
-        public string OriginalText { get; set; }
-        public string ReferredText { get; set; }
         public double ReferringCoefficient { get; set; }
         public bool IsReferringCompete { get; set; }
 
         public static ReferringManager Instance
         {
             get { return instance ?? (instance = new ReferringManager()); }
+        }
+
+        public string OriginalText
+        {
+            get { return mOriginalText; }
+            set
+            {
+                if (mOriginalText != value)
+                {
+                    mOriginalText = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("OriginalText"));
+                }
+            }
+        }
+
+        public string ReferredText
+        {
+            get { return mReferredText; }
+            set
+            {
+                if (mReferredText != value)
+                {
+                    mReferredText = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("ReferredText"));
+                }
+            }
         }
 
         public bool IsPOSDetectionActivated

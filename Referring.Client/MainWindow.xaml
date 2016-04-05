@@ -4,7 +4,8 @@
         Title="Referring [Den Mayasov]" Height="535" Width="1003" FontFamily="Constantia" Loaded="MainForm_Loaded" WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize">
     <Grid>
         <TextBox x:Name="inputTextBox" HorizontalAlignment="Left" Height="267" Margin="23,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" 
-                 Width="606" VerticalScrollBarVisibility="Auto" BorderBrush="#FF61B9E2" BorderThickness="1"/>
+                 Width="606" VerticalScrollBarVisibility="Auto" BorderBrush="#FF61B9E2" BorderThickness="1"
+                 Text="{Binding OriginalText, UpdateSourceTrigger=PropertyChanged}"/>
         <DataGrid x:Name="wordGrid" HorizontalAlignment="Left" Margin="659,37,0,0" VerticalAlignment="Top" Height="449" Width="308" Background="{x:Null}"
                   FontSize="12" FontFamily="Comic Sans MS" RowHeight="20" RowHeaderWidth="0" 
                   ItemsSource="{Binding OrderedWordList}"  AutoGenerateColumns="False" BorderBrush="#FF61B9E2" BorderThickness="1">
