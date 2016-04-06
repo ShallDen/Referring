@@ -50,6 +50,7 @@ namespace Referring.Client
             showEssayButton.Click += ShowEssayButton_Click;
             saveEssayButton.Click += SaveEssayButton_Click;
             changeCollapseModeButton.Click += ChangeCollapseModeButton_Click;
+            inputTextBox.TextChanged += InputTextBox_TextChanged;
             
             MainPresenter presenter = new MainPresenter(this);
 
@@ -58,9 +59,10 @@ namespace Referring.Client
             useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
             useWordNet.DataContext = ReferringManager.Instance;
             wordGrid.DataContext = ReferringManager.Instance;
+            originalTextSentenceCount.DataContext = ReferringManager.Instance;
 
             ReferringManager.Instance.IsPOSDetectionActivated = true;
-            ReferringManager.Instance.IsStemmingActivated = true;
+            ReferringManager.Instance.IsStemmingActivated = false;
             ReferringManager.Instance.IsWordNetActivated = true;
             ReferringManager.Instance.ReferringCoefficient = 0.5;
 
@@ -119,6 +121,16 @@ namespace Referring.Client
             referringCoefficientCombobox.SelectedIndex = coefficients.Count / 2;
         }
 
+        private void UpdateSentenceCount()
+        {
+            var sentenceCount = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
+                            .DivideTextToSentences()
+                            .ClearWhiteSpacesInList()
+                            .RemoveEmptyItemsInList()
+                            .ToLower().Count;
+            ReferringManager.Instance.OriginalTextSentenceCount = sentenceCount;
+        }
+
         public void FireFileOpenEvent(object sender, RoutedEventArgs e)
         {
             if (FileOpenClick != null)
@@ -159,6 +171,11 @@ namespace Referring.Client
         {
             if (ChangeCollapseModeClick != null)
                 ChangeCollapseModeClick(sender, e);
+        }
+
+        private void InputTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdateSentenceCount();
         }
 
         private void MainForm_Loaded(object sender, RoutedEventArgs e)

@@ -64,6 +64,9 @@ namespace Referring.Client
                 int requiredSentenceCount = (int)(sentenceCount * ReferringManager.Instance.ReferringCoefficient);
                 Logger.LogInfo(string.Format("Required sentences: {0}.", requiredSentenceCount));
 
+                ReferringManager.Instance.OriginalTextSentenceCount = sentenceCount;
+                ReferringManager.Instance.ReferredTextSentenceCount = requiredSentenceCount;
+
                 Logger.LogInfo("Taking required sentences with biggest weight.");
                 var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
 

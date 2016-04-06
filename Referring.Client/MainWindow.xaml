@@ -26,8 +26,8 @@
                 <CheckBox x:Name="usePOSDetectionCheckBox"
                     IsChecked="{Binding Path=IsPOSDetectionActivated, UpdateSourceTrigger=PropertyChanged}" Margin="9,72,41,0" Height="15" VerticalAlignment="Top">Использовать определение частей речи</CheckBox>
                 <CheckBox x:Name="useStemmingForAllTextCheckBox" Margin="9,94,0,0" 
-                	IsChecked="{Binding IsStemmingActivated, UpdateSourceTrigger=PropertyChanged}" Content="Использовать стемминг" HorizontalAlignment="Left" Height="16" VerticalAlignment="Top"/>
-                <CheckBox x:Name="useWordNet" Margin="9,115,0,0" 
+                	IsChecked="{Binding IsStemmingActivated, UpdateSourceTrigger=PropertyChanged}" Content="Использовать стемминг" HorizontalAlignment="Left" Height="16" VerticalAlignment="Top" Visibility="Collapsed"/>
+                <CheckBox x:Name="useWordNet" Margin="9,99,0,0" 
                 	IsChecked="{Binding IsWordNetActivated, UpdateSourceTrigger=PropertyChanged}" Content="Использовать WordNet" HorizontalAlignment="Left" Height="15" VerticalAlignment="Top"/>
                 <Label Content="Коэфф. реферирования:" HorizontalAlignment="Left" VerticalAlignment="Top" Height="23" Width="150" Margin="133,1,0,0"></Label>
                 <ComboBox x:Name="referringCoefficientCombobox" HorizontalAlignment="Left" VerticalAlignment="Top" Width="128" Height="26" Margin="138,27,0,0" FontFamily="Comic Sans MS" FontSize="11" Background="{x:Null}" VerticalContentAlignment="Center"/>
@@ -43,5 +43,9 @@
                 <Button x:Name="changeCollapseModeButton" Content=">>" HorizontalAlignment="Left" Margin="202,8,0,0" VerticalAlignment="Top" Width="37" Height="128" Background="{x:Null}" BorderBrush="Black"/>
             </Grid>
         </GroupBox>
+        <Grid Margin="443,-2,0,466" HorizontalAlignment="Left" Width="183">
+            <Label x:Name="countLabel" Content="Число предложений: " HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="127"/>
+            <Label x:Name="originalTextSentenceCount" Content="{Binding OriginalTextSentenceCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="51" HorizontalAlignment="Right" VerticalContentAlignment="Bottom" FontFamily="Comic Sans MS" Height="30" FontSize="14"/>
+        </Grid>
     </Grid>
 </Window>

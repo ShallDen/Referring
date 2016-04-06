@@ -10,7 +10,11 @@
         <TextBox x:Name="essayTextBox" Margin="21,34,22,70" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
                  BorderBrush="#FF61B9E2" BorderThickness="1" Text="{Binding ReferredText, UpdateSourceTrigger=PropertyChanged}" FontFamily="Constantia" IsReadOnly="True"/>
         <Label x:Name="label" Content="Реферат:" HorizontalAlignment="Left" Margin="15,7,0,0" VerticalAlignment="Top" FontFamily="Constantia"/>
+        <Button x:Name="saveEssayButton" Content="Сохранить реферат"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Margin="0,0,178,19"/>
         <Button x:Name="closeButton" Content="Закрыть"  Background="{x:Null}" BorderBrush="Black" Margin="0,0,22,19" FontFamily="Constantia" Height="37" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131"/>
-
+        <Grid HorizontalAlignment="Left" Width="183" Margin="547,0,0,360">
+            <Label x:Name="countLabel" Content="Число предложений: " HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="127" FontFamily="Constantia"/>
+            <Label x:Name="referredTextSentenceCount" Content="{Binding ReferredTextSentenceCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="51" HorizontalAlignment="Right" VerticalContentAlignment="Bottom" FontFamily="Comic Sans MS" Height="30" FontSize="14"/>
+        </Grid>
     </Grid>
 </Window>

@@ -15,6 +15,9 @@ namespace Referring.Core
         private bool mIsStemmingActivated;
         private bool mIsWordNetActivated;
         private List<Word> mOrderedWordList;
+        private int mOriginalTextSentenceCount;
+        private int mReferredTextSentenceCount;
+
         private static ReferringManager instance;
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -109,6 +112,34 @@ namespace Referring.Core
                     mOrderedWordList = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("OrderedWordList"));
+                }
+            }
+        }
+
+        public int OriginalTextSentenceCount
+        {
+            get { return mOriginalTextSentenceCount; }
+            set
+            {
+                if (mOriginalTextSentenceCount != value)
+                {
+                    mOriginalTextSentenceCount = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("OriginalTextSentenceCount"));
+                }
+            }
+        }
+
+        public int ReferredTextSentenceCount
+        {
+            get { return mReferredTextSentenceCount; }
+            set
+            {
+                if (mReferredTextSentenceCount != value)
+                {
+                    mReferredTextSentenceCount = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("ReferredTextSentenceCount"));
                 }
             }
         }
