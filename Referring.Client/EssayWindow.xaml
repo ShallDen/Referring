@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Referring.Client"
         mc:Ignorable="d"
-        Title="Реферат" Height="458.216" Width="756.959">
+        Title="Реферат" Height="443" Width="768" Icon="Images/ShallDen.png" Style="{DynamicResource MainWindowStyle}" MinHeight="380" MinWidth="640">
     <Grid>
         <TextBox x:Name="essayTextBox" Margin="21,34,22,70" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
                  BorderBrush="#FF61B9E2" BorderThickness="1" Text="{Binding ReferredText, UpdateSourceTrigger=PropertyChanged}" FontFamily="Constantia" IsReadOnly="True"/>

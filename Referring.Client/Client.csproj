@@ -64,6 +64,7 @@
       <DependentUpon>EssayWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReferringProcess.cs" />
+    <Compile Include="Styles\MainWindowStyle.cs" />
     <Page Include="EssayWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -84,6 +85,10 @@
     <Page Include="PopupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\MainWindowStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
