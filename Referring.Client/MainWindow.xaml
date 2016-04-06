@@ -8,7 +8,7 @@
                  Text="{Binding OriginalText, UpdateSourceTrigger=PropertyChanged}"/>
         <DataGrid x:Name="wordGrid" HorizontalAlignment="Left" Margin="659,37,0,0" VerticalAlignment="Top" Height="449" Width="308" Background="{x:Null}"
                   FontSize="12" FontFamily="Comic Sans MS" RowHeight="20" RowHeaderWidth="0" 
-                  ItemsSource="{Binding OrderedWordList}"  AutoGenerateColumns="False" BorderBrush="#FF61B9E2" BorderThickness="1">
+                  ItemsSource="{Binding OrderedWordList}"  AutoGenerateColumns="False" BorderBrush="#FF61B9E2" BorderThickness="1" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Header="Слово"/>
                 <DataGridTextColumn Binding="{Binding POS, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Header="Часть речи"/>

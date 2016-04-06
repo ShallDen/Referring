@@ -106,6 +106,9 @@ namespace Referring.Client
                 Logger.LogWarning("Please, perform referring process before saving summary.");
                 return;
             }
+
+            EssayWindow essayWindow = new EssayWindow();
+            essayWindow.Show();
         }
 
         private void view_ChangeCollapseModeClick(object sender, RoutedEventArgs e)
