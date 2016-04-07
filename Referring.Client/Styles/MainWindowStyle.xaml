@@ -147,11 +147,6 @@
                                                     Data="M0,8 H8 M0,7 H8 M0,6 H8"
                                                     />
                                             </Grid>
-                                            <Button.ToolTip>
-                                                <ToolTip>
-                                                    Minimize
-                                                </ToolTip>
-                                            </Button.ToolTip>
                                         </Button>
                                         <Button
                                             Grid.Column="3"
@@ -159,9 +154,7 @@
                                             VerticalAlignment="Top"
                                             Width="34"
                                             Height="26"
-                                            Style="{StaticResource VS2012WindowStyleTitleBarButton}"
-                                            Click="MaxButtonClick"
-                                            >
+                                            Style="{StaticResource VS2012WindowStyleTitleBarButton}">
                                             <Grid MaxHeight="9" MaxWidth="9">
                                                 <Path
                                                     x:Name="PART_MaxButton_Path"
@@ -172,11 +165,6 @@
                                                     Data="M0,0 H8 V8 H0 V0 M0,1 H8 M0,2 H8"
                                                     />
                                             </Grid>
-                                            <Button.ToolTip>
-                                                <ToolTip>
-                                                    Maximize
-                                                </ToolTip>
-                                            </Button.ToolTip>
                                         </Button>
                                         <Button
                                             Grid.Column="4"
@@ -195,55 +183,12 @@
                                                     Data="M0,0 L8,8 M0,8 L8,0"
                                                     />
                                             </Grid>
-                                            <Button.ToolTip>
-                                                <ToolTip>
-                                                    Close
-                                                </ToolTip>
-                                            </Button.ToolTip>
                                         </Button>
                                     </Grid>
                                 </Border>
                                 <ContentPresenter />
                             </DockPanel>
                         </Border>
-                        <Line
-                            MouseDown="OnSizeNorth"
-                            x:Name="lnSizeNorth"
-                            Stroke="Transparent"   
-                            Cursor="SizeNS"
-                            X1="1" X2="{TemplateBinding ActualWidth}" Y1="1" Y2="1"
-                            StrokeThickness="3"
-                            />
-                        <Line
-                            MouseDown="OnSizeSouth"
-                            x:Name="lnSizeSouth"
-                            Stroke="Transparent"
-                            VerticalAlignment="Bottom" 
-                            Cursor="SizeNS"
-                            X1="1" X2="{TemplateBinding ActualWidth}" Y1="{TemplateBinding ActualHeight}" Y2="{TemplateBinding ActualHeight}"
-                            StrokeThickness="3"
-                            />
-                        <Line
-                            MouseDown="OnSizeWest"
-                            x:Name="lnSizeWest"
-                            Stroke="Transparent"
-                            Cursor="SizeWE"
-                            X1="1" X2="1" Y1="1" Y2="{TemplateBinding ActualHeight}"
-                            StrokeThickness="3"
-                            />
-                        <Line
-                            MouseDown="OnSizeEast"
-                            x:Name="lnSizeEast"
-                            Stroke="Transparent"
-                            HorizontalAlignment="Right" 
-                            Cursor="SizeWE"
-                            X1="{TemplateBinding ActualWidth}" X2="{TemplateBinding ActualWidth}" Y1="1" Y2="{TemplateBinding ActualHeight}"
-                            StrokeThickness="3"
-                            />
-                        <Rectangle MouseDown="OnSizeNorthWest" x:Name="rectSizeNorthWest" Cursor="SizeNWSE" Fill="Transparent" Width="5" Height="5" VerticalAlignment="Top" HorizontalAlignment="Left" />
-                        <Rectangle MouseDown="OnSizeNorthEast" x:Name="rectSizeNorthEast" Cursor="SizeNESW" Fill="Transparent" Width="5" Height="5" VerticalAlignment="Top" HorizontalAlignment="Right" />
-                        <Rectangle MouseDown="OnSizeSouthWest" x:Name="rectSizeSouthWest" Cursor="SizeNESW" Fill="Transparent" Width="5" Height="5" VerticalAlignment="Bottom" HorizontalAlignment="Left" />
-                        <Rectangle MouseDown="OnSizeSouthEast" x:Name="rectSizeSouthEast" Cursor="SizeNWSE" Fill="Transparent" Width="5" Height="5" VerticalAlignment="Bottom" HorizontalAlignment="Right" />
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">

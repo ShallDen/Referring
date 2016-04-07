@@ -43,27 +43,6 @@ namespace Referring.Client
     {
         #region sizing event handlers
 
-        void OnSizeSouth(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.South); }
-        void OnSizeNorth(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.North); }
-        void OnSizeEast(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.East); }
-        void OnSizeWest(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.West); }
-        void OnSizeNorthWest(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.NorthWest); }
-        void OnSizeNorthEast(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.NorthEast); }
-        void OnSizeSouthEast(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.SouthEast); }
-        void OnSizeSouthWest(object sender, MouseButtonEventArgs e) { OnSize(sender, SizingAction.SouthWest); }
-
-        void OnSize(object sender, SizingAction action)
-        {
-            if (Mouse.LeftButton == MouseButtonState.Pressed)
-            {
-                sender.ForWindowFromTemplate(w =>
-                    {
-                        if (w.WindowState == WindowState.Normal)
-                            DragSize(w.GetWindowHandle(), action);
-                    });
-            }
-        }
-
         void IconMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ClickCount > 1)
@@ -81,11 +60,6 @@ namespace Referring.Client
         {
             sender.ForWindowFromTemplate(w =>
             {
-                //if (w is MainWindow)
-                //{
-                //    ((MainWindow)w).NotifyWindowsToClose();
-                //}
-
                 w.Close();
             });
         }
@@ -104,7 +78,7 @@ namespace Referring.Client
         {
             if (e.ClickCount > 1)
             {
-                MaxButtonClick(sender, e);
+                //MaxButtonClick(sender, e);
             }
             else if (e.LeftButton == MouseButtonState.Pressed)
             {
