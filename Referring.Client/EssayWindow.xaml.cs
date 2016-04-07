@@ -40,7 +40,7 @@ namespace Referring.Client
         {
             if (!ReferringManager.Instance.IsReferringCompete)
             {
-                MessageManager.ShowWarning("Please, perform referring process before saving summary.");
+                MessageManager.ShowWarning("Пожалуйста, для начала выполните операцию реферирования.");
                 Logger.LogWarning("Please, perform referring process before saving summary.");
                 return;
             }
@@ -55,12 +55,12 @@ namespace Referring.Client
 
                 FileManager.SaveContent(ReferringManager.Instance.ReferredText, fileName);
 
-                MessageManager.ShowInformation(string.Format("Essay was saved. \nYou can find it at {0}", FileManager.FileDirectory));
+                MessageManager.ShowInformation(string.Format("Реферат сохранен. \nВы можете найти его в папке {0}", FileManager.FileDirectory));
                 Logger.LogInfo("Essay was saved.");
             }
             else
             {
-                MessageManager.ShowError(string.Format("Path: {0} isn't valid", FileManager.FileFullPath));
+                MessageManager.ShowError(string.Format("Путь: {0} не верный.", FileManager.FileFullPath));
                 Logger.LogError(string.Format("Path: {0} isn't valid", FileManager.FileFullPath));
             }
         }

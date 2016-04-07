@@ -93,12 +93,12 @@ namespace Referring.Client
                 var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
 
                 Logger.LogInfo("Referring completed. Elapsed time: " + elapsedTime);
-                MessageManager.ShowInformation("Referring completed! \nElapsed time: " + elapsedTime + "\nYou can save the essay to file.");
+                MessageManager.ShowInformation("Реферирование выполнено! \nВремя операции: " + elapsedTime + "\nТеперь Вы можете сохранить реферат.");
             }
             catch (Exception ex)
             {
                 Logger.LogError("Here is some problem..." + ex);
-                MessageManager.ShowError("Here is some problem..." + ex);
+                MessageManager.ShowError("Возникла проблема..." + ex);
             }
         }
 

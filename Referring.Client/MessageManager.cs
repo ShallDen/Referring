@@ -12,19 +12,19 @@
         public static void ShowInformation(string message)
         {
             popup = new PopupWindow();
-            popup.ShowMessage("Information", message);
+            popup.ShowMessage("Информация", message);
         }
 
         public static void ShowWarning(string warning)
         {
             popup = new PopupWindow();
-            popup.ShowMessage("Warning", warning);
+            popup.ShowMessage("Предупреждение", warning);
         }
 
         public static void ShowError(string error)
         {
             popup = new PopupWindow();
-            popup.ShowMessage("Error", error);
+            popup.ShowMessage("Ошибка", error);
         }
     }
 }
