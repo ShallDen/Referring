@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Referring.Core;
 using System.Windows.Controls;
 using System.Windows;
@@ -95,7 +95,16 @@ namespace Referring.Client
         private void view_RunRefferingClick(object sender, RoutedEventArgs e)
         {
             ReferringProcess referring = new ReferringProcess();
-            referring.RunReferrengProcess();
+
+            Thread referringThread = new Thread(referring.RunReferrengProcess);
+            referringThread.Name = "Referring thread";
+            referringThread.IsBackground = true;
+
+            referring.ProgressChanged += Referring_ProgressChanged;
+            referring.WorkCompleted += Referring_WorkCompleted;
+            
+            var syncContext = SynchronizationContext.Current;
+            referringThread.Start(syncContext);
         }
 
         private void view_ShowEssayClick(object sender, RoutedEventArgs e)
@@ -114,6 +123,16 @@ namespace Referring.Client
         private void view_ChangeCollapseModeClick(object sender, RoutedEventArgs e)
         {
             view.ChangeCollapseMode();
+        }
+
+        private void Referring_ProgressChanged(int percent)
+        {
+            MessageManager.ShowInformation(percent.ToString());
+        }
+
+        private void Referring_WorkCompleted(string elapsedTime)
+        {
+            MessageManager.ShowInformation("Реферирование выполнено! \nВремя операции: " + elapsedTime + "\nТеперь Вы можете сохранить реферат.");
         }
     }
 }

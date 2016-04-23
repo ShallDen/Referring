@@ -7,9 +7,13 @@ using Referring.Core;
 using LAIR.Collections.Generic;
 using Referring.WordNet;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Referring.Client
 {
+    public delegate void ReferringProgressChangeDelegate(int percent);
+    public delegate void ReferringWorkCompleteDelegate(string elapsedTime);
+
     public class ReferringProcess
     {
         List<string> sentenceList = new List<string>();
@@ -25,10 +29,15 @@ namespace Referring.Client
 
         WordNetManager wordNetManager = new WordNetManager();
 
-        public void RunReferrengProcess()
+        public event ReferringProgressChangeDelegate ProgressChanged;
+        public event ReferringWorkCompleteDelegate WorkCompleted;
+
+        public void RunReferrengProcess(object param)
         {
             try
             {
+                var context = (SynchronizationContext)param;
+              
                 Logger.LogInfo("Starting referring process...");
 
                 Stopwatch stopwatch = new Stopwatch();
@@ -93,13 +102,30 @@ namespace Referring.Client
                 var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
 
                 Logger.LogInfo("Referring completed. Elapsed time: " + elapsedTime);
-                MessageManager.ShowInformation("Реферирование выполнено! \nВремя операции: " + elapsedTime + "\nТеперь Вы можете сохранить реферат.");
+
+
+                context.Send(OnProgressChanged, 100);
+                context.Send(OnWorkCompleted, elapsedTime);
             }
             catch (Exception ex)
             {
                 Logger.LogError("Here is some problem..." + ex);
                 MessageManager.ShowError("Возникла проблема..." + ex);
             }
+        }
+
+        private void OnProgressChanged(object i)
+        {
+            int percent = Convert.ToInt32(i);
+
+            if (ProgressChanged != null)
+                ProgressChanged(percent);
+        }
+
+        private void OnWorkCompleted(object elapsedTime)
+        {
+            if (WorkCompleted != null)
+                WorkCompleted(elapsedTime.ToString());
         }
 
         private void CalculateWordWeights()
