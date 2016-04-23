@@ -27,6 +27,7 @@ namespace Referring.Client
         void FireFileOpenEvent(object sender, RoutedEventArgs e);
         void FocusOnRunReferringButton();
         void ChangeCollapseMode();
+        void SetProgressBarValue(double value);
         event RoutedEventHandler FileOpenClick;
         event RoutedEventHandler FileSaveClick;
         event RoutedEventHandler FileSelectClick;
@@ -113,6 +114,11 @@ namespace Referring.Client
                 this.IsCollapsed = true;
                 this.changeCollapseModeButton.Content = ">>";
             }
+        }
+
+        public void SetProgressBarValue(double value)
+        {
+            progressBar.Value = value;
         }
 
         private void FillReferringCoefficientCombobox()

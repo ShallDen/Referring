@@ -125,9 +125,9 @@ namespace Referring.Client
             view.ChangeCollapseMode();
         }
 
-        private void Referring_ProgressChanged(int percent)
+        private void Referring_ProgressChanged(double percent)
         {
-            MessageManager.ShowInformation(percent.ToString());
+            view.SetProgressBarValue(percent);
         }
 
         private void Referring_WorkCompleted(string elapsedTime)

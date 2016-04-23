@@ -1,7 +1,7 @@
 ﻿<Window x:Name="MainForm" x:Class="Referring.Client.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Автоматизированное реферирование [Денис Маясов]" Height="549" Width="1003" FontFamily="Constantia" Loaded="MainForm_Loaded" WindowStyle="None" ResizeMode="CanMinimize" 
+        Title="Автоматизированное реферирование [Денис Маясов]" Height="575" Width="1003" FontFamily="Constantia" Loaded="MainForm_Loaded" WindowStyle="None" ResizeMode="CanMinimize" 
         Icon="Images/ShallDen.png" Style="{DynamicResource MainWindowStyle}">
     <Grid>
         <TextBox x:Name="inputTextBox" HorizontalAlignment="Left" Height="267" Margin="20,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" 
@@ -43,9 +43,13 @@
                 <Button x:Name="changeCollapseModeButton" Content=">>" HorizontalAlignment="Left" Margin="202,8,0,0" VerticalAlignment="Top" Width="37" Height="128" Background="{x:Null}" BorderBrush="Black"/>
             </Grid>
         </GroupBox>
-        <Grid Margin="443,-2,0,466" HorizontalAlignment="Left" Width="183">
+        <Grid Margin="443,-2,0,0" HorizontalAlignment="Left" Width="183" Height="37" VerticalAlignment="Top">
             <Label x:Name="countLabel" Content="Число предложений: " HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="127"/>
             <Label x:Name="originalTextSentenceCount" Content="{Binding OriginalTextSentenceCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="51" HorizontalAlignment="Right" VerticalContentAlignment="Bottom" FontFamily="Comic Sans MS" Height="30" FontSize="14"/>
+        </Grid>
+        <Grid HorizontalAlignment="Left" Height="23" Margin="20,494,0,0" VerticalAlignment="Top" Width="606">
+            <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="24" Margin="0,0,0,-1" VerticalAlignment="Top" Width="606" BorderBrush="#FF61B9E2" Background="{x:Null}"/>
+            <TextBlock Text="{Binding ElementName=progressBar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Comic Sans MS" />
         </Grid>
     </Grid>
 </Window>

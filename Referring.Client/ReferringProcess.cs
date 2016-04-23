@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Referring.Client
 {
-    public delegate void ReferringProgressChangeDelegate(int percent);
+    public delegate void ReferringProgressChangeDelegate(double percent);
     public delegate void ReferringWorkCompleteDelegate(string elapsedTime);
 
     public class ReferringProcess
@@ -32,12 +32,18 @@ namespace Referring.Client
         public event ReferringProgressChangeDelegate ProgressChanged;
         public event ReferringWorkCompleteDelegate WorkCompleted;
 
+        private SynchronizationContext context;
+
+        public double ProgressPercentegCurrent { get; set; }
+
         public void RunReferrengProcess(object param)
         {
             try
             {
-                var context = (SynchronizationContext)param;
-              
+                context = (SynchronizationContext)param;
+
+                SetProgressPercentage(0);
+
                 Logger.LogInfo("Starting referring process...");
 
                 Stopwatch stopwatch = new Stopwatch();
@@ -103,8 +109,7 @@ namespace Referring.Client
 
                 Logger.LogInfo("Referring completed. Elapsed time: " + elapsedTime);
 
-
-                context.Send(OnProgressChanged, 100);
+                SetProgressPercentage(100);
                 context.Send(OnWorkCompleted, elapsedTime);
             }
             catch (Exception ex)
@@ -116,7 +121,7 @@ namespace Referring.Client
 
         private void OnProgressChanged(object i)
         {
-            int percent = Convert.ToInt32(i);
+            double percent = Convert.ToDouble(i);
 
             if (ProgressChanged != null)
                 ProgressChanged(percent);
@@ -128,8 +133,23 @@ namespace Referring.Client
                 WorkCompleted(elapsedTime.ToString());
         }
 
+        private void SetProgressPercentage(double value)
+        {
+            ProgressPercentegCurrent = value;
+            context.Send(OnProgressChanged, ProgressPercentegCurrent);
+        }
+
+        private void AddProgressPercentage(double value)
+        {
+            ProgressPercentegCurrent += value;
+            context.Send(OnProgressChanged, ProgressPercentegCurrent);
+        }
+
         private void CalculateWordWeights()
         {
+            double percentageMax = 60;
+            double step = (percentageMax - ProgressPercentegCurrent) / sentenceList.Count;
+
             int sentenceIndex = 0;
 
             //choose sentence
@@ -207,6 +227,7 @@ namespace Referring.Client
 
                 ++sentenceIndex;
                 goodSentenceList.Add(new Sentence { Index = sentenceIndex, Value = sentence, Weight = 0 });
+                AddProgressPercentage(step);
             }
 
             Logger.LogInfo("Word weights are calculated.");
@@ -214,6 +235,9 @@ namespace Referring.Client
 
         private void CalculateSentenceWeights()
         {
+            double percentageMax = 99;
+            double step = (percentageMax - ProgressPercentegCurrent) / sentenceList.Count;
+
             //choose sentence
             foreach (var sentence in goodSentenceList)
             {
@@ -231,6 +255,8 @@ namespace Referring.Client
                         searchSentence.Weight += searchWord.Weight;
                     }
                 }
+
+                AddProgressPercentage(step);
             }
 
             Logger.LogInfo("Sentence weights are calculated.");
