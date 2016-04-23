@@ -25,6 +25,7 @@ namespace Referring.Core
         protected ReferringManager() { }
 
         public double ReferringCoefficient { get; set; }
+        public bool IsReferringRunning { get; set; }
         public bool IsReferringCompete { get; set; }
 
         public static ReferringManager Instance

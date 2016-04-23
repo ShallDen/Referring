@@ -94,6 +94,12 @@ namespace Referring.Client
 
         private void view_RunRefferingClick(object sender, RoutedEventArgs e)
         {
+            if (ReferringManager.Instance.IsReferringRunning)
+            {
+                MessageManager.ShowWarning("Процесс реферирования уже запущен. Пожалуйста, дождитесь окончания операции.");
+                return;
+            }
+
             ReferringProcess referring = new ReferringProcess();
 
             Thread referringThread = new Thread(referring.RunReferrengProcess);
@@ -132,6 +138,7 @@ namespace Referring.Client
 
         private void Referring_WorkCompleted(string elapsedTime)
         {
+            ReferringManager.Instance.IsReferringRunning = false;
             MessageManager.ShowInformation("Реферирование выполнено! \nВремя операции: " + elapsedTime + "\nТеперь Вы можете сохранить реферат.");
         }
     }

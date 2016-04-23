@@ -49,6 +49,8 @@ namespace Referring.Client
                 Stopwatch stopwatch = new Stopwatch();
                 stopwatch.Start();
 
+                ReferringManager.Instance.IsReferringRunning = true;
+
                 Logger.LogInfo("Initialing restricted words and good POSes.");
                 InitializeRestrictedWords();
                 InitializeGoodPOSes();
@@ -116,6 +118,8 @@ namespace Referring.Client
             {
                 Logger.LogError("Here is some problem..." + ex);
                 MessageManager.ShowError("Возникла проблема..." + ex);
+
+                ReferringManager.Instance.IsReferringRunning = false;
             }
         }
 
