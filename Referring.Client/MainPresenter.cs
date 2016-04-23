@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using Referring.Core;
 using System.Windows.Controls;
 using System.Windows;
@@ -102,15 +103,12 @@ namespace Referring.Client
 
             ReferringProcess referring = new ReferringProcess();
 
-            Thread referringThread = new Thread(referring.RunReferrengProcess);
-            referringThread.Name = "Referring thread";
-            referringThread.IsBackground = true;
-
             referring.ProgressChanged += Referring_ProgressChanged;
             referring.WorkCompleted += Referring_WorkCompleted;
-            
+
+            //Run referring process
             var syncContext = SynchronizationContext.Current;
-            referringThread.Start(syncContext);
+            Task task = Task.Factory.StartNew(referring.RunReferrengProcess, syncContext);
         }
 
         private void view_ShowEssayClick(object sender, RoutedEventArgs e)
