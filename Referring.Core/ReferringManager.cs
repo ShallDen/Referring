@@ -14,6 +14,7 @@ namespace Referring.Core
         private bool mIsPOSDetectionActivated;
         private bool mIsStemmingActivated;
         private bool mIsWordNetActivated;
+        private bool mIsWordCutActivated;
         private List<Word> mOrderedWordList;
         private int mOriginalTextSentenceCount;
         private int mReferredTextSentenceCount;
@@ -25,6 +26,7 @@ namespace Referring.Core
         protected ReferringManager() { }
 
         public double ReferringCoefficient { get; set; }
+        public int WordCutLength { get; set; }
         public bool IsReferringRunning { get; set; }
         public bool IsReferringCompete { get; set; }
 
@@ -99,6 +101,20 @@ namespace Referring.Core
                     mIsWordNetActivated = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("IsWordNetActivated"));
+                }
+            }
+        }
+
+        public bool IsWordCutActivated
+        {
+            get { return mIsWordCutActivated; }
+            set
+            {
+                if (mIsWordCutActivated != value)
+                {
+                    mIsWordCutActivated = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("IsWordCutActivated"));
                 }
             }
         }

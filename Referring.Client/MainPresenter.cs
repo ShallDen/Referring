@@ -23,6 +23,7 @@ namespace Referring.Client
             view.FileOpenClick += view_FileOpenClick;
             view.FileSaveClick += view_FileSaveClick;
             view.ReferringCoefficientChanged += view_CoefficientChanged;
+            view.WordCutLenghtChanged += View_WordCutLenghtChanged;
             view.RunRefferingClick += view_RunRefferingClick;
             view.ShowEssayClick += view_ShowEssayClick;
             view.ChangeCollapseModeClick += view_ChangeCollapseModeClick;
@@ -91,6 +92,12 @@ namespace Referring.Client
         {
             ReferringManager.Instance.ReferringCoefficient = (double)e.AddedItems[0];
             Logger.LogInfo("Referring coefficient was changed. New value: " + ReferringManager.Instance.ReferringCoefficient);
+        }
+
+        private void View_WordCutLenghtChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ReferringManager.Instance.WordCutLength = (int)e.AddedItems[0];
+            Logger.LogInfo("Word cut length was changed. New value: " + ReferringManager.Instance.WordCutLength);
         }
 
         private void view_RunRefferingClick(object sender, RoutedEventArgs e)

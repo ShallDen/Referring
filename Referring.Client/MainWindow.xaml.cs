@@ -32,6 +32,7 @@ namespace Referring.Client
         event RoutedEventHandler FileSaveClick;
         event RoutedEventHandler FileSelectClick;
         event SelectionChangedEventHandler ReferringCoefficientChanged;
+        event SelectionChangedEventHandler WordCutLenghtChanged;
         event RoutedEventHandler RunRefferingClick;
         event RoutedEventHandler ShowEssayClick;
         event RoutedEventHandler ChangeCollapseModeClick;
@@ -43,15 +44,17 @@ namespace Referring.Client
         {
             Logger.LogInfo("Loading main window...");
             InitializeComponent();
-            FillReferringCoefficientCombobox();
+            FillComboboxes();
 
+            inputTextBox.TextChanged += InputTextBox_TextChanged;
             selectFileButton.Click += SelectFileButton_Click;
             referringCoefficientCombobox.SelectionChanged += CoefficientCombobox_SelectionChanged;
+            wordCutCombobox.SelectionChanged += WordCutCombobox_SelectionChanged;
             runReferringButton.Click += RunReferringButton_Click;
             showEssayButton.Click += ShowEssayButton_Click;
             saveEssayButton.Click += SaveEssayButton_Click;
             changeCollapseModeButton.Click += ChangeCollapseModeButton_Click;
-            inputTextBox.TextChanged += InputTextBox_TextChanged;
+            
             
             MainPresenter presenter = new MainPresenter(this);
 
@@ -59,13 +62,17 @@ namespace Referring.Client
             usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
             useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
             useWordNet.DataContext = ReferringManager.Instance;
+            useWordCut.DataContext = ReferringManager.Instance;
             wordGrid.DataContext = ReferringManager.Instance;
             originalTextSentenceCount.DataContext = ReferringManager.Instance;
 
             ReferringManager.Instance.IsPOSDetectionActivated = true;
             ReferringManager.Instance.IsStemmingActivated = false;
             ReferringManager.Instance.IsWordNetActivated = true;
+            ReferringManager.Instance.IsWordCutActivated = false;
             ReferringManager.Instance.ReferringCoefficient = 0.5;
+
+            wordCutCombobox.Visibility = Visibility.Hidden;
 
             ChangeCollapseMode();
 
@@ -86,6 +93,7 @@ namespace Referring.Client
         public event RoutedEventHandler FileSaveClick;
         public event RoutedEventHandler FileSelectClick;
         public event SelectionChangedEventHandler ReferringCoefficientChanged;
+        public event SelectionChangedEventHandler WordCutLenghtChanged;
         public event RoutedEventHandler RunRefferingClick;
         public event RoutedEventHandler ShowEssayClick;
         public event RoutedEventHandler ChangeCollapseModeClick;
@@ -94,6 +102,7 @@ namespace Referring.Client
         public bool IsCollapsed { get; set; }
 
         private static List<double> coefficients = new List<double> { 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9 };
+        private static List<int> wordLengths = new List<int> { 3, 4, 5 };
 
         public void FocusOnRunReferringButton()
         {
@@ -121,10 +130,13 @@ namespace Referring.Client
             progressBar.Value = value;
         }
 
-        private void FillReferringCoefficientCombobox()
+        private void FillComboboxes()
         {
             referringCoefficientCombobox.ItemsSource = coefficients;
             referringCoefficientCombobox.SelectedIndex = coefficients.Count / 2;
+
+            wordCutCombobox.ItemsSource = wordLengths;
+            wordCutCombobox.SelectedItem = wordLengths.First();
         }
 
         private void UpdateSentenceCount()
@@ -153,6 +165,12 @@ namespace Referring.Client
         {
             if (ReferringCoefficientChanged != null)
                 ReferringCoefficientChanged(sender, e);
+        }
+
+        private void WordCutCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (WordCutLenghtChanged != null)
+                WordCutLenghtChanged(sender, e);
         }
 
         private void ShowEssayButton_Click(object sender, RoutedEventArgs e)
@@ -187,6 +205,27 @@ namespace Referring.Client
         private void MainForm_Loaded(object sender, RoutedEventArgs e)
         {
             Logger.LogInfo("Main window was loaded.");
+        }
+
+        private void useWordCut_Checked(object sender, RoutedEventArgs e)
+        {
+            wordCutCombobox.Visibility = Visibility.Visible;
+        }
+
+        private void useWordCut_Unchecked(object sender, RoutedEventArgs e)
+        {
+            wordCutCombobox.Visibility = Visibility.Hidden;
+        }
+
+        private void usePOSDetectionCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            useWordCut.IsEnabled = false;
+            useWordCut.IsChecked = false;
+        }
+
+        private void usePOSDetectionCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            useWordCut.IsEnabled = true;
         }
     }
 }
