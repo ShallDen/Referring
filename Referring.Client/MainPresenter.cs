@@ -31,6 +31,12 @@ namespace Referring.Client
 
         private void view_FileSelectClick(object sender, RoutedEventArgs e)
         {
+            if (ReferringManager.Instance.IsReferringRunning)
+            {
+                MessageManager.ShowWarning("Процесс реферирования уже запущен. Пожалуйста, дождитесь окончания операции.");
+                return;
+            }
+
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = "Текстовые файлы|*.txt";
 

@@ -16,25 +16,23 @@ namespace Referring.Client
 
     public class ReferringProcess
     {
-        List<string> sentenceList = new List<string>();
-        List<string> wordList = new List<string>();
-        List<string> sentenceListOriginalCase = new List<string>();
-        List<string> wordListUpperOriginalCase = new List<string>();
+        private List<string> sentenceList = new List<string>();
+        private List<string> wordList = new List<string>();
+        private List<string> sentenceListOriginalCase = new List<string>();
+        private List<string> wordListUpperOriginalCase = new List<string>();
 
-        List<Word> goodWordList = new List<Word>();
-        List<Sentence> goodSentenceList = new List<Sentence>();
+        private List<Word> goodWordList = new List<Word>();
+        private List<Sentence> goodSentenceList = new List<Sentence>();
 
-        List<string> gooodPOSesList;
-        List<string> restrictedWordsList;
+        private List<string> gooodPOSesList;
+        private List<string> restrictedWordsList;
 
-        WordNetManager wordNetManager = new WordNetManager();
-
-        public event ReferringProgressChangeDelegate ProgressChanged;
-        public event ReferringWorkCompleteDelegate WorkCompleted;
+        private WordNetManager wordNetManager = new WordNetManager();
 
         private SynchronizationContext context;
 
-        public double ProgressPercentegCurrent { get; set; }
+        public event ReferringProgressChangeDelegate ProgressChanged;
+        public event ReferringWorkCompleteDelegate WorkCompleted;
 
         public void RunReferrengProcess(object param)
         {
@@ -139,20 +137,20 @@ namespace Referring.Client
 
         private void SetProgressPercentage(double value)
         {
-            ProgressPercentegCurrent = value;
-            context.Send(OnProgressChanged, ProgressPercentegCurrent);
+            ReferringManager.Instance.ProgressPercentageCurrent = value;
+            context.Send(OnProgressChanged, ReferringManager.Instance.ProgressPercentageCurrent);
         }
 
         private void AddProgressPercentage(double value)
         {
-            ProgressPercentegCurrent += value;
-            context.Send(OnProgressChanged, ProgressPercentegCurrent);
+            ReferringManager.Instance.ProgressPercentageCurrent += value;
+            context.Send(OnProgressChanged, ReferringManager.Instance.ProgressPercentageCurrent);
         }
 
         private void CalculateWordWeights()
         {
             double percentageMax = 60;
-            double step = (percentageMax - ProgressPercentegCurrent) / sentenceList.Count;
+            double step = (percentageMax - ReferringManager.Instance.ProgressPercentageCurrent) / sentenceList.Count;
 
             int sentenceIndex = 0;
 
@@ -172,8 +170,18 @@ namespace Referring.Client
                     var synsetsWithPOS = new List<SynSet>();
 
                     word = wordVariable;
+
+                    //check word length
+                    if (ReferringManager.Instance.IsWordCutActivated)
+                    {
+                        if (word.Length < ReferringManager.Instance.WordCutLength)
+                            continue;
+                    }
+
+                    //stemm the word
                     stemmedWord = Stemm(word);
 
+                    //check if word already in list
                     if (goodWordList.Select(c => Stemm(c.Value)).Contains(stemmedWord))
                         continue;
 
@@ -240,7 +248,7 @@ namespace Referring.Client
         private void CalculateSentenceWeights()
         {
             double percentageMax = 99;
-            double step = (percentageMax - ProgressPercentegCurrent) / sentenceList.Count;
+            double step = (percentageMax - ReferringManager.Instance.ProgressPercentageCurrent) / sentenceList.Count;
 
             //choose sentence
             foreach (var sentence in goodSentenceList)
