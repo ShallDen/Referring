@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Referring.Core;
+using Microsoft.Win32;
 
 namespace Referring.Client
 {
@@ -26,9 +27,48 @@ namespace Referring.Client
 
             essayTextBox.DataContext = ReferringManager.Instance;
             referredTextSentenceCount.DataContext = ReferringManager.Instance;
+            essayComparisonPercentage.DataContext = ReferringManager.Instance;
 
             closeButton.Click += CloseButton_Click;
             saveEssayButton.Click += SaveEssayButton_Click;
+            compareEssayButton.Click += CompareEssayButton_Click;
+        }
+
+        private void CompareEssayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ReferringManager.Instance.IsReferringRunning)
+            {
+                MessageManager.ShowWarning("Процесс реферирования уже запущен. Пожалуйста, дождитесь окончания операции.");
+                return;
+            }
+
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Текстовые файлы|*.txt";
+
+            if (dlg.ShowDialog() == true)
+            {
+                ReferringManager.Instance.ManualEssayPath = dlg.FileName;
+
+                if (FileManager.IsExist(ReferringManager.Instance.ManualEssayPath))
+                {
+                    Logger.LogInfo("Opening file: " + ReferringManager.Instance.ManualEssayPath);
+                    ReferringManager.Instance.ManualEssayText = FileManager.GetContent(ReferringManager.Instance.ManualEssayPath);
+                    Logger.LogInfo("File was opened.");
+
+                    EssayComparer comparer = new EssayComparer(ReferringManager.Instance.AutoEssayPath, ReferringManager.Instance.ManualEssayPath);
+                    ReferringManager.Instance.EssayComparisonPercentage = comparer.Compare();
+
+                    if(ReferringManager.Instance.IsComparisonCompete)
+                    {
+
+                    }
+                }
+                else
+                {
+                    MessageManager.ShowError(string.Format("Путь: {0} не верный.", ReferringManager.Instance.ManualEssayPath));
+                    Logger.LogError("Path: " + ReferringManager.Instance.ManualEssayPath + " isn't valid.");
+                }
+            }
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)

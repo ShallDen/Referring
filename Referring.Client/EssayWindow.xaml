@@ -10,11 +10,17 @@
         <TextBox x:Name="essayTextBox" Margin="21,34,22,70" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
                  BorderBrush="#FF61B9E2" BorderThickness="1" Text="{Binding ReferredText, UpdateSourceTrigger=PropertyChanged}" FontFamily="Constantia" IsReadOnly="True"/>
         <Label x:Name="label" Content="Реферат:" HorizontalAlignment="Left" Margin="15,7,0,0" VerticalAlignment="Top" FontFamily="Constantia"/>
+        <Button x:Name="compareEssayButton" Content="Сравнить рефераты"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Margin="0,0,335,19.2"/>
         <Button x:Name="saveEssayButton" Content="Сохранить реферат"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131" Margin="0,0,178,19"/>
         <Button x:Name="closeButton" Content="Закрыть"  Background="{x:Null}" BorderBrush="Black" Margin="0,0,22,19" FontFamily="Constantia" Height="37" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="131"/>
         <Grid HorizontalAlignment="Left" Width="183" Margin="547,0,0,360">
             <Label x:Name="countLabel" Content="Число предложений: " HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="127" FontFamily="Constantia"/>
             <Label x:Name="referredTextSentenceCount" Content="{Binding ReferredTextSentenceCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="51" HorizontalAlignment="Right" VerticalContentAlignment="Bottom" FontFamily="Comic Sans MS" Height="30" FontSize="14"/>
         </Grid>
+        <Label x:Name="hitLabel" Content="Совпадение: " HorizontalAlignment="Left" Margin="21,343,0,0" VerticalAlignment="Top" FontFamily="Constantia"/>
+        <!--
+        <Label x:Name="essayComparisonPercentage" Content="{Binding EssayComparisonPercentage, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0}%}" HorizontalAlignment="Left" Margin="103,341,0,0" VerticalAlignment="Top" Width="77" FontFamily="Comic Sans MS" Height="30" FontSize="14"/>
+        -->
+        <TextBlock x:Name="essayComparisonPercentage" Text="{Binding EssayComparisonPercentage, UpdateSourceTrigger=PropertyChanged, StringFormat={}{0:0}%}" HorizontalAlignment="Left" Margin="108,347,0,28.2" VerticalAlignment="Center" Width="63" FontFamily="Comic Sans MS" Height="20" FontSize="14"/>
     </Grid>
 </Window>

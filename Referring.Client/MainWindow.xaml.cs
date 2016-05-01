@@ -71,6 +71,7 @@ namespace Referring.Client
             ReferringManager.Instance.IsWordNetActivated = true;
             ReferringManager.Instance.IsWordCutActivated = false;
             ReferringManager.Instance.ReferringCoefficient = 0.5;
+            ReferringManager.Instance.WordCutLength = 3;
 
             wordCutCombobox.Visibility = Visibility.Hidden;
 

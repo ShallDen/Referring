@@ -76,13 +76,12 @@ namespace Referring.Client
 
             if (FileManager.IsExist(FileManager.FileFullPath))
             {
-                string fileName = string.Concat(FileManager.FileDirectory + "Summary_" + FileManager.FileName);
-                Logger.LogInfo("Saving essay: " + fileName);
+                Logger.LogInfo("Saving essay: " + ReferringManager.Instance.AutoEssayPath);
                 
-                if(FileManager.IsExist(fileName))
-                    FileManager.Delete(fileName);
+                if(FileManager.IsExist(ReferringManager.Instance.AutoEssayPath))
+                    FileManager.Delete(ReferringManager.Instance.AutoEssayPath);
 
-                FileManager.SaveContent(ReferringManager.Instance.ReferredText, fileName);
+                FileManager.SaveContent(ReferringManager.Instance.ReferredText, ReferringManager.Instance.AutoEssayPath);
 
                 MessageManager.ShowInformation(string.Format("Реферат сохранен. \nВы можете найти его в папке {0}", FileManager.FileDirectory));
                 Logger.LogInfo("Essay was saved.");

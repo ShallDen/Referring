@@ -18,6 +18,7 @@ namespace Referring.Core
         private List<Word> mOrderedWordList;
         private int mOriginalTextSentenceCount;
         private int mReferredTextSentenceCount;
+        private double mEssayComparisonPercentage;
 
         private static ReferringManager instance;
 
@@ -26,10 +27,18 @@ namespace Referring.Core
         protected ReferringManager() { }
 
         public double ReferringCoefficient { get; set; }
+        public double ProgressPercentageCurrent { get; set; }
         public int WordCutLength { get; set; }
         public bool IsReferringRunning { get; set; }
         public bool IsReferringCompete { get; set; }
-        public double ProgressPercentageCurrent { get; set; }
+        public bool IsComparisonCompete { get; set; }
+        public string ManualEssayPath { get; set; }
+        public string ManualEssayText { get; set; }
+
+        public string AutoEssayPath
+        {
+            get { return FileManager.FileDirectory + "Summary_" + FileManager.FileName; }
+        }
 
         public static ReferringManager Instance
         {
@@ -158,6 +167,20 @@ namespace Referring.Core
                     mReferredTextSentenceCount = value;
                     if (PropertyChanged != null)
                         PropertyChanged(this, new PropertyChangedEventArgs("ReferredTextSentenceCount"));
+                }
+            }
+        }
+
+        public double EssayComparisonPercentage
+        {
+            get { return mEssayComparisonPercentage; }
+            set
+            {
+                if (mEssayComparisonPercentage != value)
+                {
+                    mEssayComparisonPercentage = value;
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, new PropertyChangedEventArgs("EssayComparisonPercentage"));
                 }
             }
         }

@@ -60,6 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EssayComparer.cs" />
     <Compile Include="EssayWindow.xaml.cs">
       <DependentUpon>EssayWindow.xaml</DependentUpon>
     </Compile>

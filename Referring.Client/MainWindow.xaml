@@ -6,7 +6,7 @@
     <Grid>
         <TextBox x:Name="inputTextBox" HorizontalAlignment="Left" Height="267" Margin="20,35,0,0" TextWrapping="Wrap" VerticalAlignment="Top" 
                  Width="606" VerticalScrollBarVisibility="Auto" BorderBrush="#FF61B9E2" BorderThickness="1"
-                 Text="{Binding OriginalText, UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding OriginalText, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True"/>
         <DataGrid x:Name="wordGrid" HorizontalAlignment="Left" Margin="659,37,0,0" VerticalAlignment="Top" Height="477" Width="308" Background="{x:Null}"
                   FontSize="12" FontFamily="Comic Sans MS" RowHeight="20" RowHeaderWidth="0" 
                   ItemsSource="{Binding OrderedWordList}"  AutoGenerateColumns="False" BorderBrush="#FF61B9E2" BorderThickness="1" IsReadOnly="True">
@@ -21,7 +21,7 @@
         <Label x:Name="wordsTextBox" Content="Список слов:" HorizontalAlignment="Left" Margin="654,10,0,0" VerticalAlignment="Top" Height="22" Width="86"/>
         <Label x:Name="sourceTextTextBox" Content="Исходный текст:" Margin="14,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="101"/>
 
-        <GroupBox Header="Настройки реферирования" Margin="20,312,0,0" Padding="5" Height="167" VerticalAlignment="Top" HorizontalAlignment="Left" Width="306" BorderBrush="#FF61B9E2" BorderThickness="1">
+        <GroupBox Header="Настройки реферирования" Margin="20,312,0,0" Padding="5" Height="167" VerticalAlignment="Top" HorizontalAlignment="Left" Width="306" BorderBrush="#FF61B9E2" BorderThickness="1" TextOptions.TextFormattingMode="Display">
             <Grid Margin="0,0,-12,-22" Height="186" VerticalAlignment="Top">
                 <CheckBox x:Name="usePOSDetectionCheckBox"
                     IsChecked="{Binding Path=IsPOSDetectionActivated, UpdateSourceTrigger=PropertyChanged}" Margin="9,68,41,0" Height="15" VerticalAlignment="Top" Checked="usePOSDetectionCheckBox_Checked" Unchecked="usePOSDetectionCheckBox_Unchecked">Использовать определение частей речи</CheckBox>
