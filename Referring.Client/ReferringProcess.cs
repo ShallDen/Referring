@@ -335,7 +335,7 @@ namespace Referring.Client
             {
                 string stemmedSynword = string.Empty;
 
-                //delete underscore symbols from synword if it consists of several words and not to stemm it
+                //delete underscore symbols from synword if it consists of several words and not stemm it
                 stemmedSynword = !synword.Contains("_") ? Stemm(synword) : synword.Replace("_", " ");
 
                 if (stemmedSynword == stemmedWord)
@@ -343,7 +343,7 @@ namespace Referring.Client
 
                 if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
                 {
-                    //add weight to word from synwords
+                    //add weight to word from synword
                     var usingCount = CalculateUsingCount(synword);
 
                     if (usingCount > 0)
@@ -379,7 +379,7 @@ namespace Referring.Client
 
         private void InitializeRestrictedWords()
         {
-            restrictedWordsList = new List<string> { "is", "am", "are", "was", "has", "it", "it's", "two"};
+            restrictedWordsList = new List<string> { "is", "am", "are", "was", "has", "it", "it's", "two", "the", "a", "in", "at", "on"};
         }
 
         private void InitializeGoodPOSes()

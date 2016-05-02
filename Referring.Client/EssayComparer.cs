@@ -31,12 +31,12 @@ namespace Referring.Client
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList();
 
-            double requiredHits = autoEssaySentences.Count;
+            double requiredHits = manualEssaySentences.Count;
             double hit = 0;
 
-            foreach (var sentence in autoEssaySentences)
+            foreach (var sentence in manualEssaySentences)
             {
-                if (manualEssaySentences.Contains(sentence))
+                if (autoEssaySentences.Contains(sentence))
                 {
                     ++hit;
                 }

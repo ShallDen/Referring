@@ -32,6 +32,9 @@ namespace Referring.Client
             closeButton.Click += CloseButton_Click;
             saveEssayButton.Click += SaveEssayButton_Click;
             compareEssayButton.Click += CompareEssayButton_Click;
+
+            bool showComparisonGroupBox = ReferringManager.Instance.IsComparisonCompete && !string.IsNullOrEmpty(ReferringManager.Instance.ManualEssayPath);
+            comparisonGroupBox.Visibility = showComparisonGroupBox ? Visibility.Visible : Visibility.Hidden;
         }
 
         private void CompareEssayButton_Click(object sender, RoutedEventArgs e)
@@ -58,9 +61,9 @@ namespace Referring.Client
                     EssayComparer comparer = new EssayComparer(ReferringManager.Instance.AutoEssayPath, ReferringManager.Instance.ManualEssayPath);
                     ReferringManager.Instance.EssayComparisonPercentage = comparer.Compare();
 
-                    if(ReferringManager.Instance.IsComparisonCompete)
+                    if (ReferringManager.Instance.IsComparisonCompete)
                     {
-
+                        comparisonGroupBox.Visibility = Visibility.Visible;
                     }
                 }
                 else
