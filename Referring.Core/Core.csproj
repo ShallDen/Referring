@@ -60,9 +60,9 @@
       <Project>{445d5e0d-3bf6-4a96-bf36-f418b6704fb1}</Project>
       <Name>POSTagger</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Referring.Stemmers\Stemmers.csproj">
+    <ProjectReference Include="..\Referring.Stemmers\Stemming.csproj">
       <Project>{f8066cf0-a5f8-4dcf-b553-ec90bd28383b}</Project>
-      <Name>Stemmers</Name>
+      <Name>Stemming</Name>
     </ProjectReference>
     <ProjectReference Include="..\Referring.WordNet\WordNet.csproj">
       <Project>{c1839d70-9ff7-431b-a3ca-08e8ce70ba2c}</Project>

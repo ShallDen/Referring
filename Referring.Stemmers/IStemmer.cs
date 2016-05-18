@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Referring.Stemmers
+namespace Referring.Stemming
 {
     public interface IStemmer
     {

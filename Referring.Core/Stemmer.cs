@@ -1,4 +1,4 @@
-﻿using Referring.Stemmers;
+﻿using Referring.Stemming;
 
 namespace Referring.Core
 {

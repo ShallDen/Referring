@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Referring.Stemmers
+namespace Referring.Stemming
 {
 
     internal class Among

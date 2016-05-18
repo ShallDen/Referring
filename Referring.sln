@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Referring.Core\Core
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POSTagger", "Referring.POSTagger\POSTagger.csproj", "{445D5E0D-3BF6-4A96-BF36-F418B6704FB1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stemmers", "Referring.Stemmers\Stemmers.csproj", "{F8066CF0-A5F8-4DCF-B553-EC90BD28383B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stemming", "Referring.Stemmers\Stemming.csproj", "{F8066CF0-A5F8-4DCF-B553-EC90BD28383B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WordNet", "Referring.WordNet\WordNet.csproj", "{C1839D70-9FF7-431B-A3CA-08E8CE70BA2C}"
 EndProject

@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Referring.Stemmers
+namespace Referring.Stemming
 {
     public class RussianStemmer : StemmerOperations, IStemmer
     {

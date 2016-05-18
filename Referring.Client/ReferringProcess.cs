@@ -341,7 +341,7 @@ namespace Referring.Client
                 if (stemmedSynword == stemmedWord)
                     continue;
 
-                if (ReferringManager.Instance.OriginalText.Contains(stemmedSynword))
+                if (ReferringManager.Instance.OriginalText.ToLower().Contains(stemmedSynword))
                 {
                     //add weight to word from synword
                     var usingCount = CalculateUsingCount(synword);
@@ -379,7 +379,7 @@ namespace Referring.Client
 
         private void InitializeRestrictedWords()
         {
-            restrictedWordsList = new List<string> { "is", "am", "are", "was", "has", "it", "it's", "two", "the", "a", "in", "at", "on"};
+            restrictedWordsList = new List<string> { "is", "am", "are", "was", "has", "it", "it's", "one", "two", "the", "a", "in", "at", "on"};
         }
 
         private void InitializeGoodPOSes()
