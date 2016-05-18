@@ -16,29 +16,64 @@ namespace Referring.Client
 
     public class ReferringProcess
     {
-        private List<string> sentenceList = new List<string>();
-        private List<string> wordList = new List<string>();
-        private List<string> sentenceListOriginalCase = new List<string>();
-        private List<string> wordListUpperOriginalCase = new List<string>();
+        private List<string> sentenceList;
+        private List<string> wordList;
+        private List<string> sentenceListOriginalCase;
+        private List<string> wordListUpperOriginalCase;
 
-        private List<Word> goodWordList = new List<Word>();
-        private List<Sentence> goodSentenceList = new List<Sentence>();
-
+        private List<Word> goodWordList;
+        private List<Sentence> goodSentenceList;
         private List<string> gooodPOSesList;
         private List<string> restrictedWordsList;
 
         private WordNetManager wordNetManager = new WordNetManager();
-
         private SynchronizationContext context;
 
         public event ReferringProgressChangeDelegate ProgressChanged;
         public event ReferringWorkCompleteDelegate WorkCompleted;
+
+
+        public List<Word> GoodWordList
+        {
+            get { return goodWordList; }
+        }
+
+        public List<Sentence> GoodSentenceList
+        {
+            get { return goodSentenceList; }
+        }
+
+        public List<string> SentenceList
+        {
+            get { return sentenceList; }
+            set
+            {
+                sentenceList = value;
+            }
+        }
+
+        public List<string> WordList
+        {
+            get { return wordList; }
+            set
+            {
+                wordList = value;
+            }
+        }
+
+        public bool UsePercentage { get; set; }
+
+        public ReferringProcess()
+        {
+            InitializeLists();
+        }
 
         public void RunReferrengProcess(object param)
         {
             try
             {
                 context = (SynchronizationContext)param;
+                UsePercentage = true;
 
                 SetProgressPercentage(0);
 
@@ -48,10 +83,6 @@ namespace Referring.Client
                 stopwatch.Start();
 
                 ReferringManager.Instance.IsReferringRunning = true;
-
-                Logger.LogInfo("Initialing restricted words and good POSes.");
-                InitializeRestrictedWords();
-                InitializeGoodPOSes();
 
                 Logger.LogInfo("Getting sentence list.");
                 sentenceList = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
@@ -147,7 +178,7 @@ namespace Referring.Client
             context.Send(OnProgressChanged, ReferringManager.Instance.ProgressPercentageCurrent);
         }
 
-        private void CalculateWordWeights()
+        public void CalculateWordWeights()
         {
             double percentageMax = 60;
             double step = (percentageMax - ReferringManager.Instance.ProgressPercentageCurrent) / sentenceList.Count;
@@ -239,7 +270,9 @@ namespace Referring.Client
 
                 ++sentenceIndex;
                 goodSentenceList.Add(new Sentence { Index = sentenceIndex, Value = sentence, Weight = 0 });
-                AddProgressPercentage(step);
+
+                if(UsePercentage)
+                    AddProgressPercentage(step);
             }
 
             Logger.LogInfo("Word weights are calculated.");
@@ -375,6 +408,21 @@ namespace Referring.Client
 
             Logger.LogInfo("Essay was built.");
             return essay;
+        }
+
+        private void InitializeLists()
+        {
+            sentenceList = new List<string>();
+            wordList = new List<string>();
+            sentenceListOriginalCase = new List<string>();
+            wordListUpperOriginalCase = new List<string>();
+
+            goodWordList = new List<Word>();
+            goodSentenceList = new List<Sentence>();
+
+            Logger.LogInfo("Initialing restricted words and good POSes.");
+            InitializeRestrictedWords();
+            InitializeGoodPOSes();
         }
 
         private void InitializeRestrictedWords()

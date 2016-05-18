@@ -343,7 +343,7 @@ namespace Referring.WordNet
             _posSynSetDataFile = null;
 
             if (!System.IO.Directory.Exists(_wordNetDirectory))
-                throw new DirectoryNotFoundException("Non-existent WordNet directory:  " + _wordNetDirectory);
+                throw new DirectoryNotFoundException("Отсутствует WordNet директория:  " + _wordNetDirectory);
 
             // get data and index paths
             string[] dataPaths = new string[]

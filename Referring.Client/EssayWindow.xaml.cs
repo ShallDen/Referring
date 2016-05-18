@@ -59,6 +59,10 @@ namespace Referring.Client
                     Logger.LogInfo("File was opened.");
 
                     EssayComparer comparer = new EssayComparer(ReferringManager.Instance.AutoEssayPath, ReferringManager.Instance.ManualEssayPath);
+
+                    var autoEssayStatistics = comparer.GetWordStatistics(ReferringManager.Instance.ReferredText);
+                    var manualEssayStatistics = comparer.GetWordStatistics(ReferringManager.Instance.ManualEssayText);
+
                     ReferringManager.Instance.EssayComparisonPercentage = comparer.Compare();
 
                     if (ReferringManager.Instance.IsComparisonCompete)

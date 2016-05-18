@@ -47,5 +47,26 @@ namespace Referring.Client
             ReferringManager.Instance.IsComparisonCompete = true;
             return percentage;
         }
+
+        public List<Word> GetWordStatistics(string essay)
+        {
+            var referringProcess = new ReferringProcess();
+            referringProcess.UsePercentage = false;
+
+            referringProcess.SentenceList = essay.ClearUnnecessarySymbolsInText()
+                    .DivideTextToSentences()
+                    .ClearWhiteSpacesInList()
+                    .RemoveEmptyItemsInList()
+                    .ToLower(); 
+
+            referringProcess.WordList = essay.ClearUnnecessarySymbolsInText()
+                    .DivideTextToWords()
+                    .RemoveEmptyItemsInList()
+                    .ToLower(); 
+
+            referringProcess.CalculateWordWeights();
+
+            return referringProcess.GoodWordList;
+        }
     }
 }

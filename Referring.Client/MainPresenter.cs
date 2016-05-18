@@ -113,7 +113,18 @@ namespace Referring.Client
                 return;
             }
 
-            ReferringProcess referring = new ReferringProcess();
+            ReferringProcess referring = null; 
+
+            try
+            {
+                referring = new ReferringProcess();
+            }
+            catch(Exception ex)
+            {
+                MessageManager.ShowWarning(ex.InnerException.Message);
+                Logger.LogError(ex.InnerException.Message);
+                return;
+            }
 
             referring.ProgressChanged += Referring_ProgressChanged;
             referring.WorkCompleted += Referring_WorkCompleted;
