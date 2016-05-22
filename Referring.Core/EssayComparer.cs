@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Referring.Core;
 using System.ComponentModel;
 
-namespace Referring.Client
+namespace Referring.Core
 {
     public enum ComparisonType
     {
@@ -62,11 +62,6 @@ namespace Referring.Client
                         PropertyChanged(this, new PropertyChangedEventArgs("EssayComparisonPercentage"));
                 }
             }
-        }
-
-        public EssayComparer()
-        {
-
         }
 
         public double Compare(ComparisonType comparisonType, string firstEssay, string secondtEssay)

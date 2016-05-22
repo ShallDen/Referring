@@ -9,7 +9,7 @@ using Referring.WordNet;
 using System.Diagnostics;
 using System.Threading;
 
-namespace Referring.Client
+namespace Referring.Core
 {
     public delegate void ReferringProgressChangeDelegate(double percent);
     public delegate void ReferringWorkCompleteDelegate(string elapsedTime);
@@ -146,7 +146,6 @@ namespace Referring.Client
             catch (Exception ex)
             {
                 Logger.LogError("Here is some problem..." + ex);
-                MessageManager.ShowError("Возникла проблема..." + ex);
 
                 ReferringManager.Instance.IsReferringRunning = false;
             }

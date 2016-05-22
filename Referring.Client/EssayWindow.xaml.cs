@@ -58,30 +58,6 @@ namespace Referring.Client
             mainWordTypeRadioButton.IsChecked = true;
 
             FillCombobox();
-
-        //    bool showComparisonGroupBox = ReferringManager.Instance.IsComparisonCompete && !string.IsNullOrEmpty(ReferringManager.Instance.ManualEssayPath);
-        //  comparisonGroupBox.Visibility = showComparisonGroupBox ? Visibility.Visible : Visibility.Hidden;
-        }
-
-        private void MainWordTypeSelectionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var selectionValue = (string)e.AddedItems[0];
-
-            switch (selectionValue)
-            {
-                case "по полноте":
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
-                    break;
-                case "по точности (с учетом погрешности)":
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithError;
-                    break;
-                case "по точности (с использованием коэф. значимости)":
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithSignificanceKoefficient;
-                    break;
-                default:
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
-                    break;
-            }
         }
 
         private void FillCombobox()
@@ -106,6 +82,27 @@ namespace Referring.Client
         {
             mainWordTypeSelectionComboBox.SelectedValue = types.First();
             EssayComparer.Instance.ComparisonType = ComparisonType.FullSentences;
+        }
+
+        private void MainWordTypeSelectionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectionValue = (string)e.AddedItems[0];
+
+            switch (selectionValue)
+            {
+                case "по полноте":
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+                    break;
+                case "по точности (с учетом погрешности)":
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithError;
+                    break;
+                case "по точности (с использованием коэф. значимости)":
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithSignificanceKoefficient;
+                    break;
+                default:
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+                    break;
+            }
         }
 
         private void ChooseFisrtFileButton_Click(object sender, RoutedEventArgs e)
