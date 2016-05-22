@@ -21,6 +21,13 @@ namespace Referring.Client
     /// </summary>
     public partial class EssayWindow : Window
     {
+        private static List<string> types = new List<string>
+        {
+            "по полноте",
+            "по точности (с учетом погрешности)",
+            "по точности (с использованием коэф. значимости)"
+        };
+
         public EssayWindow()
         {
             InitializeComponent();
@@ -34,8 +41,13 @@ namespace Referring.Client
             compareEssayButton.Click += CompareEssayButton_Click;
             chooseFisrtFileButton.Click += ChooseFisrtFileButton_Click;
             chooseSecondFileButton.Click += ChooseSecondFileButton_Click;
+
             useCurrentEssayAsFirstFile.Checked += UseCurrentEssayAsFirstFile_Checked;
             useCurrentEssayAsFirstFile.Unchecked += UseCurrentEssayAsFirstFile_Unchecked;
+            fullSentenceTypeRadioButton.Checked += FullSentenceTypeRadioButton_Checked;
+            mainWordTypeRadioButton.Checked += MainWordTypeRadioButton_Checked;
+            mainWordTypeRadioButton.Unchecked += MainWordTypeRadioButton_Unchecked;
+            mainWordTypeSelectionComboBox.SelectionChanged += MainWordTypeSelectionComboBox_SelectionChanged;
 
             hitLabel.Visibility = Visibility.Hidden;
             essayComparisonPercentage.Visibility = Visibility.Hidden;
@@ -43,8 +55,57 @@ namespace Referring.Client
             EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
             EssayComparer.Instance.IsUseCurrentEssayAsFirstFile = true;
 
+            mainWordTypeRadioButton.IsChecked = true;
+
+            FillCombobox();
+
         //    bool showComparisonGroupBox = ReferringManager.Instance.IsComparisonCompete && !string.IsNullOrEmpty(ReferringManager.Instance.ManualEssayPath);
         //  comparisonGroupBox.Visibility = showComparisonGroupBox ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        private void MainWordTypeSelectionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var selectionValue = (string)e.AddedItems[0];
+
+            switch (selectionValue)
+            {
+                case "по полноте":
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+                    break;
+                case "по точности (с учетом погрешности)":
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithError;
+                    break;
+                case "по точности (с использованием коэф. значимости)":
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithSignificanceKoefficient;
+                    break;
+                default:
+                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+                    break;
+            }
+        }
+
+        private void FillCombobox()
+        {
+            mainWordTypeSelectionComboBox.ItemsSource = types;
+            mainWordTypeSelectionComboBox.SelectedValue = types.First();
+        }
+
+        private void MainWordTypeRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+            mainWordTypeSelectionComboBox.IsEnabled = true;
+        }
+
+        private void MainWordTypeRadioButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            EssayComparer.Instance.ComparisonType = ComparisonType.FullSentences;
+            mainWordTypeSelectionComboBox.IsEnabled = false;
+        }
+
+        private void FullSentenceTypeRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            mainWordTypeSelectionComboBox.SelectedValue = types.First();
+            EssayComparer.Instance.ComparisonType = ComparisonType.FullSentences;
         }
 
         private void ChooseFisrtFileButton_Click(object sender, RoutedEventArgs e)
@@ -99,10 +160,7 @@ namespace Referring.Client
 
             EssayComparer comparer = new EssayComparer();
 
-            var firstEssayStatistics = comparer.GetWordStatistics(firstEssay);
-            var secondEssayStatistics = comparer.GetWordStatistics(secondtEssay);
-
-            var percentage = comparer.Compare(EssayComparer.Instance.ComparisonType, firstEssayStatistics, secondEssayStatistics);
+            var percentage = comparer.Compare(EssayComparer.Instance.ComparisonType, firstEssay, secondtEssay);
 
             if (EssayComparer.Instance.ComparisonType != ComparisonType.MainWordAccuracyWithSignificanceKoefficient)
             {
@@ -110,6 +168,11 @@ namespace Referring.Client
 
                 hitLabel.Visibility = Visibility.Visible;
                 essayComparisonPercentage.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                hitLabel.Visibility = Visibility.Hidden;
+                essayComparisonPercentage.Visibility = Visibility.Hidden;
             }
 
             MessageManager.ShowInformation("Сравнение рефератов завершено.");

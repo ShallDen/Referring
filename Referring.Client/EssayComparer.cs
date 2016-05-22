@@ -18,11 +18,6 @@ namespace Referring.Client
 
     public class EssayComparer : INotifyPropertyChanged
     {
-        private string autoEssay = string.Empty;
-        private string manualEssay = string.Empty;
-        private List<string> autoEssaySentences = new List<string>();
-        private List<string> manualEssaySentences = new List<string>();
-
         private double mEssayComparisonPercentage;
         private bool mIsUseCurrentEssayAsFirstFile;
 
@@ -74,25 +69,30 @@ namespace Referring.Client
 
         }
 
-        public double Compare(ComparisonType comparisonType, List<Word> autoEssayStatistics, List<Word> manualEssayStatistics)
+        public double Compare(ComparisonType comparisonType, string firstEssay, string secondtEssay)
         {
+            var firstEssayStatistics = GetWordStatistics(firstEssay);
+            var secondEssayStatistics = GetWordStatistics(secondtEssay);
+
+            Logger.LogInfo("Comparison type is '" + comparisonType.ToString() + "'");
+
             double info = 0;
             switch (comparisonType)
             {
                 case ComparisonType.FullSentences:
-                    info = CompareFullSentences();
+                    info = CompareFullSentences(firstEssay, secondtEssay);
                     break;
                 case ComparisonType.MainWordFulness:
-                    info = CompareMainWordFulness(autoEssayStatistics, manualEssayStatistics);
+                    info = CompareMainWordFulness(firstEssayStatistics, secondEssayStatistics);
                     break;
                 case ComparisonType.MainWordAccuracyWithError:
-                    CompareMainWordAccuracyWithError(autoEssayStatistics, manualEssayStatistics);
+                    CompareMainWordAccuracyWithError(firstEssayStatistics, secondEssayStatistics);
                     break;
                 case ComparisonType.MainWordAccuracyWithSignificanceKoefficient:
-                    info = CompareMainWordAccuracyWithSignificanceKoefficient(autoEssayStatistics, manualEssayStatistics);
+                    info = CompareMainWordAccuracyWithSignificanceKoefficient(firstEssayStatistics, secondEssayStatistics);
                     break;
                 default:
-                    Console.WriteLine("Default case");
+                    info = CompareMainWordFulness(firstEssayStatistics, secondEssayStatistics);
                     break;
             }
 
@@ -101,24 +101,24 @@ namespace Referring.Client
             return info;
         }
 
-        private double CompareFullSentences()
+        private double CompareFullSentences(string firstEssay, string secondEssay)
         {
             //Сравнение по полным предложениям
             Logger.LogInfo("Using original cases in essay.");
 
-            autoEssaySentences = autoEssay.DivideTextToSentences()
+            var firstEssaySentences = firstEssay.DivideTextToSentences()
                 .ClearWhiteSpacesInList();
-            manualEssaySentences = manualEssay.ClearUnnecessarySymbolsInText()
+            var secondEssaySentences = secondEssay.ClearUnnecessarySymbolsInText()
                 .DivideTextToSentences()
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList();
 
-            double requiredHits = manualEssaySentences.Count;
+            double requiredHits = secondEssaySentences.Count;
             double hit = 0;
 
-            foreach (var sentence in manualEssaySentences)
+            foreach (var sentence in secondEssaySentences)
             {
-                if (autoEssaySentences.Contains(sentence))
+                if (firstEssaySentences.Contains(sentence))
                 {
                     ++hit;
                 }
