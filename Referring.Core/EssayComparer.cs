@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Referring.Core;
 using System.ComponentModel;
+using System.IO;
 
 namespace Referring.Core
 {
@@ -31,8 +32,10 @@ namespace Referring.Core
         }
 
         public ComparisonType ComparisonType { get; set; }
-
         public bool IsComparisonCompete { get; set; }
+        public string FisrtEssayPath { get; set; }
+        public string SecondEssayPath { get; set; }
+
         public bool IsUseCurrentEssayAsFirstFile
         {
             get { return mIsUseCurrentEssayAsFirstFile; }
@@ -46,9 +49,6 @@ namespace Referring.Core
                 }
             }
         }
-
-        public string FisrtEssayPath { get; set; }
-        public string SecondEssayPath { get; set; }
 
         public double EssayComparisonPercentage
         {
@@ -81,10 +81,10 @@ namespace Referring.Core
                     info = CompareMainWordFulness(firstEssayStatistics, secondEssayStatistics);
                     break;
                 case ComparisonType.MainWordAccuracyWithError:
-                    CompareMainWordAccuracyWithError(firstEssayStatistics, secondEssayStatistics);
+                    info = CompareMainWordAccuracyWithError(firstEssayStatistics, secondEssayStatistics);
                     break;
                 case ComparisonType.MainWordAccuracyWithSignificanceKoefficient:
-                    info = CompareMainWordAccuracyWithSignificanceKoefficient(firstEssayStatistics, secondEssayStatistics);
+                    info = CompareMainWordAccuracyWithSignificanceCoefficient(firstEssayStatistics, secondEssayStatistics);
                     break;
                 default:
                     info = CompareMainWordFulness(firstEssayStatistics, secondEssayStatistics);
@@ -109,32 +109,70 @@ namespace Referring.Core
                 .RemoveEmptyItemsInList();
 
             double requiredHits = secondEssaySentences.Count;
-            double hit = 0;
+            double hits = 0;
 
             foreach (var sentence in secondEssaySentences)
             {
                 if (firstEssaySentences.Contains(sentence))
-                {
-                    ++hit;
-                }
+                    ++hits;
             }
 
-            double percentage = hit / requiredHits * 100;
+            double percentage = hits / requiredHits * 100;
 
             return percentage;
         }
 
-        public double CompareMainWordFulness(List<Word> autoEssayStatistics, List<Word> manualEssayStatistics)
+        public double CompareMainWordFulness(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
         {
             //Сравнение по полноте
-            double requiredHits = manualEssayStatistics.Count;
+            double requiredHits = secondEssayStatistics.Count;
             double hits = 0;
 
-            foreach (var word in manualEssayStatistics)
+            foreach (var word in secondEssayStatistics)
             {
-                if (autoEssayStatistics.Where(c=>c.Value == word.Value).Any())
-                {
+                if (fisrtEssayStatistics.Where(c=>c.Value == word.Value).Any())
                     ++hits;
+            }
+
+            double percentage = hits / requiredHits * 100;
+
+            return percentage;
+        }
+
+        public double CompareMainWordAccuracyWithError(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
+        {
+            //Сравнение по точности с погрешностью
+            double error = 0.2;
+            double requiredHits = secondEssayStatistics.Count;
+            double hits = 0;
+
+            foreach (var word in secondEssayStatistics)
+            {
+                if (fisrtEssayStatistics.Where(c => c.Value == word.Value).Any())
+                {
+                    var firstEssayWord = fisrtEssayStatistics.Where(c => c.Value == word.Value).First();
+                    var possibleWeightMin = firstEssayWord.Weight * (1 - error);
+                    var possibleWeightMax = firstEssayWord.Weight * (1 + error);
+
+                    //Round minimum value
+                    var integeterPartMin = Math.Truncate(possibleWeightMin);
+                    var fractionalPartMin = possibleWeightMin - integeterPartMin;
+
+                    if (fractionalPartMin > 0)
+                        possibleWeightMin -= fractionalPartMin;
+
+                    //Round maximum value
+                    var integeterPartMax = Math.Truncate(possibleWeightMax);
+                    var fractionalPartMax = possibleWeightMax - integeterPartMax;
+
+                    if (fractionalPartMax > 0)
+                        possibleWeightMax = integeterPartMax + 1;
+
+                    // min <= weight <= max
+                    bool isHit = word.Weight >= possibleWeightMin && word.Weight <= possibleWeightMax;
+
+                    if (isHit)
+                        ++hits;
                 }
             }
 
@@ -143,34 +181,52 @@ namespace Referring.Core
             return percentage;
         }
 
-        public double CompareMainWordAccuracyWithError(List<Word> autoEssayStatistics, List<Word> manualEssayStatistics)
-        {
-            //Сравнение по точности с погрешностью
-            double percentage = 0;
-            return percentage;
-        }
-
-        public double CompareMainWordAccuracyWithSignificanceKoefficient(List<Word> autoEssayStatistics, List<Word> manualEssayStatistics)
+        public double CompareMainWordAccuracyWithSignificanceCoefficient(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
         {
             //Сравнение по точности с использованием коэф. значимости
             double hits = 0;
             double weightRate = 0;
-            List<Word> autoWinsList = new List<Word>();
 
-            foreach (var word in manualEssayStatistics)
+            //before your loop
+            var statistics = new StringBuilder();
+
+            var header = string.Format("Слово;Вес #1;Вес #2;Отношение");
+            statistics.AppendLine(header);
+
+            foreach (var word in secondEssayStatistics)
             {
-                var temp = autoEssayStatistics.Where(c => c.Value == word.Value);
-                if (temp.Any())
+                if (fisrtEssayStatistics.Where(c => c.Value == word.Value).Any())
                 {
-                    double autoValue = temp.Select(c => c.Weight).First();
-                    double manualValue = word.Weight;
+                    var firstEssayWord = fisrtEssayStatistics.Where(c => c.Value == word.Value).First();
 
-                    if (autoValue > manualValue)
-                        autoWinsList.Add(word);
+                    double wordRate = (double)firstEssayWord.Weight / word.Weight;
 
-                    weightRate += autoValue / manualValue;
+                    var newLine = string.Format("{0};{1};{2};{3}", word.Value, firstEssayWord.Weight, word.Weight, wordRate);
+                    statistics.AppendLine(newLine);
+
+                    weightRate += wordRate;
                     ++hits;
                 }
+            }
+
+            if (FileManager.IsExist(FileManager.FileFullPath))
+            {
+                int index = FileManager.FileName.LastIndexOf(".");
+                string name = FileManager.FileName.Substring(0, index);
+                string fileName = string.Concat(FileManager.FileDirectory + "ComparisonStatistics_" + name + ".csv");
+
+                Logger.LogInfo("Saving comparison statistics: " + fileName);
+
+                if (FileManager.IsExist(fileName))
+                    FileManager.Delete(fileName);
+
+                FileManager.SaveContent(statistics.ToString(), fileName);
+
+                Logger.LogInfo("Comparison statistics was saved.");
+            }
+            else
+            {
+                Logger.LogError(string.Format("Path: {0} isn't valid", FileManager.FileFullPath));
             }
 
             double percentage = weightRate / hits * 100;

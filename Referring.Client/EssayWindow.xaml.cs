@@ -143,6 +143,7 @@ namespace Referring.Client
         {
             string firstEssay = string.Empty;
             string secondtEssay = string.Empty;
+            string extraMessage = string.Empty;
 
             if (ReferringManager.Instance.IsReferringRunning)
             {
@@ -165,14 +166,17 @@ namespace Referring.Client
 
                 hitLabel.Visibility = Visibility.Visible;
                 essayComparisonPercentage.Visibility = Visibility.Visible;
+                extraMessage = "\nРефераты идентичны на " + string.Format("{0:0}%", EssayComparer.Instance.EssayComparisonPercentage);
             }
             else
             {
                 hitLabel.Visibility = Visibility.Hidden;
                 essayComparisonPercentage.Visibility = Visibility.Hidden;
+
+                extraMessage = "Полученная статистика была сохранена в CSV файл.";
             }
 
-            MessageManager.ShowInformation("Сравнение рефератов завершено.");
+            MessageManager.ShowInformation("Сравнение рефератов завершено. " + extraMessage);
         }
 
         private void SaveEssayButton_Click(object sender, RoutedEventArgs e)

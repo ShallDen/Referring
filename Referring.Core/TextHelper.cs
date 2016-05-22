@@ -34,6 +34,7 @@ namespace Referring.Core
                 .Replace("\"", "")
                 .Replace("“", "")
                 .Replace("”", "")
+                .Replace("»", "")
                 .Replace("\r", " ")
                 .Replace("\n", " ");
             
