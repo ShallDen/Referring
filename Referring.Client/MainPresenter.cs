@@ -163,11 +163,11 @@ namespace Referring.Client
             MessageManager.ShowInformation("Реферирование выполнено! \nВремя операции: " + elapsedTime + "\nТеперь Вы можете сохранить реферат.");
 
             //compare essay if manual essay was selected
-            if (!string.IsNullOrEmpty(ReferringManager.Instance.ManualEssayPath))
-            {
-                EssayComparer comparer = new EssayComparer(ReferringManager.Instance.AutoEssayPath, ReferringManager.Instance.ManualEssayPath);
-                ReferringManager.Instance.EssayComparisonPercentage = comparer.Compare();
-            }
+            //if (!string.IsNullOrEmpty(ReferringManager.Instance.ManualEssayPath))
+            //{
+            //    EssayComparer comparer = new EssayComparer();
+            //    ReferringManager.Instance.EssayComparisonPercentage = comparer.Compare();
+            //}
         }
     }
 }

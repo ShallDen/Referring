@@ -27,17 +27,27 @@ namespace Referring.Client
 
             essayTextBox.DataContext = ReferringManager.Instance;
             referredTextSentenceCount.DataContext = ReferringManager.Instance;
-            essayComparisonPercentage.DataContext = ReferringManager.Instance;
+            essayComparisonPercentage.DataContext = EssayComparer.Instance;
+            useCurrentEssayAsFirstFile.DataContext = EssayComparer.Instance;
 
-            closeButton.Click += CloseButton_Click;
             saveEssayButton.Click += SaveEssayButton_Click;
             compareEssayButton.Click += CompareEssayButton_Click;
+            chooseFisrtFileButton.Click += ChooseFisrtFileButton_Click;
+            chooseSecondFileButton.Click += ChooseSecondFileButton_Click;
+            useCurrentEssayAsFirstFile.Checked += UseCurrentEssayAsFirstFile_Checked;
+            useCurrentEssayAsFirstFile.Unchecked += UseCurrentEssayAsFirstFile_Unchecked;
 
-            bool showComparisonGroupBox = ReferringManager.Instance.IsComparisonCompete && !string.IsNullOrEmpty(ReferringManager.Instance.ManualEssayPath);
-            comparisonGroupBox.Visibility = showComparisonGroupBox ? Visibility.Visible : Visibility.Hidden;
+            hitLabel.Visibility = Visibility.Hidden;
+            essayComparisonPercentage.Visibility = Visibility.Hidden;
+
+            EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+            EssayComparer.Instance.IsUseCurrentEssayAsFirstFile = true;
+
+        //    bool showComparisonGroupBox = ReferringManager.Instance.IsComparisonCompete && !string.IsNullOrEmpty(ReferringManager.Instance.ManualEssayPath);
+        //  comparisonGroupBox.Visibility = showComparisonGroupBox ? Visibility.Visible : Visibility.Hidden;
         }
 
-        private void CompareEssayButton_Click(object sender, RoutedEventArgs e)
+        private void ChooseFisrtFileButton_Click(object sender, RoutedEventArgs e)
         {
             if (ReferringManager.Instance.IsReferringRunning)
             {
@@ -50,37 +60,59 @@ namespace Referring.Client
 
             if (dlg.ShowDialog() == true)
             {
-                ReferringManager.Instance.ManualEssayPath = dlg.FileName;
-
-                if (FileManager.IsExist(ReferringManager.Instance.ManualEssayPath))
-                {
-                    Logger.LogInfo("Opening file: " + ReferringManager.Instance.ManualEssayPath);
-                    ReferringManager.Instance.ManualEssayText = FileManager.GetContent(ReferringManager.Instance.ManualEssayPath);
-                    Logger.LogInfo("File was opened.");
-
-                    EssayComparer comparer = new EssayComparer(ReferringManager.Instance.AutoEssayPath, ReferringManager.Instance.ManualEssayPath);
-
-                    var autoEssayStatistics = comparer.GetWordStatistics(ReferringManager.Instance.ReferredText);
-                    var manualEssayStatistics = comparer.GetWordStatistics(ReferringManager.Instance.ManualEssayText);
-
-                    ReferringManager.Instance.EssayComparisonPercentage = comparer.Compare();
-
-                    if (ReferringManager.Instance.IsComparisonCompete)
-                    {
-                        comparisonGroupBox.Visibility = Visibility.Visible;
-                    }
-                }
-                else
-                {
-                    MessageManager.ShowError(string.Format("Путь: {0} не верный.", ReferringManager.Instance.ManualEssayPath));
-                    Logger.LogError("Path: " + ReferringManager.Instance.ManualEssayPath + " isn't valid.");
-                }
+                EssayComparer.Instance.FisrtEssayPath = dlg.FileName;
             }
         }
 
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        private void ChooseSecondFileButton_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            if (ReferringManager.Instance.IsReferringRunning)
+            {
+                MessageManager.ShowWarning("Процесс реферирования уже запущен. Пожалуйста, дождитесь окончания операции.");
+                return;
+            }
+
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = "Текстовые файлы|*.txt";
+
+            if (dlg.ShowDialog() == true)
+            {
+                EssayComparer.Instance.SecondEssayPath = dlg.FileName;
+            }
+        }
+
+        private void CompareEssayButton_Click(object sender, RoutedEventArgs e)
+        {
+            string firstEssay = string.Empty;
+            string secondtEssay = string.Empty;
+
+            if (ReferringManager.Instance.IsReferringRunning)
+            {
+                MessageManager.ShowWarning("Процесс реферирования уже запущен. Пожалуйста, дождитесь окончания операции.");
+                return;
+            }
+
+            if (!LoadEssays(ref firstEssay, ref secondtEssay))
+                return;
+
+            Logger.LogInfo("Essays were loaded. Starting comparison.");
+
+            EssayComparer comparer = new EssayComparer();
+
+            var firstEssayStatistics = comparer.GetWordStatistics(firstEssay);
+            var secondEssayStatistics = comparer.GetWordStatistics(secondtEssay);
+
+            var percentage = comparer.Compare(EssayComparer.Instance.ComparisonType, firstEssayStatistics, secondEssayStatistics);
+
+            if (EssayComparer.Instance.ComparisonType != ComparisonType.MainWordAccuracyWithSignificanceKoefficient)
+            {
+                EssayComparer.Instance.EssayComparisonPercentage = percentage;
+
+                hitLabel.Visibility = Visibility.Visible;
+                essayComparisonPercentage.Visibility = Visibility.Visible;
+            }
+
+            MessageManager.ShowInformation("Сравнение рефератов завершено.");
         }
 
         private void SaveEssayButton_Click(object sender, RoutedEventArgs e)
@@ -110,6 +142,53 @@ namespace Referring.Client
                 MessageManager.ShowError(string.Format("Путь: {0} не верный.", FileManager.FileFullPath));
                 Logger.LogError(string.Format("Path: {0} isn't valid", FileManager.FileFullPath));
             }
+        }
+
+
+        private void UseCurrentEssayAsFirstFile_Unchecked(object sender, RoutedEventArgs e)
+        {
+            chooseFisrtFileButton.IsEnabled = true;
+        }
+
+        private void UseCurrentEssayAsFirstFile_Checked(object sender, RoutedEventArgs e)
+        {
+            chooseFisrtFileButton.IsEnabled = false;
+        }
+
+        private bool LoadEssays(ref string firstEssay, ref string secondtEssay)
+        {
+            bool isLoaded = false;
+            bool isFirstEssaySpecified = !string.IsNullOrEmpty(EssayComparer.Instance.FisrtEssayPath);
+            bool isSecondEssaySpecified = !string.IsNullOrEmpty(EssayComparer.Instance.SecondEssayPath);
+
+            if (EssayComparer.Instance.IsUseCurrentEssayAsFirstFile && isSecondEssaySpecified)
+            {
+                firstEssay = ReferringManager.Instance.ReferredText;
+
+                if (FileManager.IsExist(EssayComparer.Instance.SecondEssayPath))
+                {
+                    secondtEssay = FileManager.GetContent(EssayComparer.Instance.SecondEssayPath);
+                    isLoaded = true;
+                }
+            }
+
+            else if (isFirstEssaySpecified && isSecondEssaySpecified)
+            {
+                if (FileManager.IsExist(EssayComparer.Instance.FisrtEssayPath) && FileManager.IsExist(EssayComparer.Instance.SecondEssayPath))
+                {
+                    firstEssay = FileManager.GetContent(EssayComparer.Instance.FisrtEssayPath);
+                    secondtEssay = FileManager.GetContent(EssayComparer.Instance.SecondEssayPath);
+                    isLoaded = true;
+                }
+            }
+            else
+            {
+                MessageManager.ShowWarning("Пожалуйста выберите оба реферата для сравнения!");
+                Logger.LogWarning("Пожалуйста выберите оба реферата для сравнения!");
+                isLoaded = false;
+            }
+
+            return isLoaded;
         }
     }
 }
