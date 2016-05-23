@@ -43,7 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EssayComparer.cs" />
+    <Compile Include="EssayComparisonManager.cs" />
+    <Compile Include="EssayComparisonProcess.cs" />
     <Compile Include="FileManager.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="MouseHelper.cs" />

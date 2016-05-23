@@ -35,8 +35,8 @@ namespace Referring.Client
 
             essayTextBox.DataContext = ReferringManager.Instance;
             referredTextSentenceCount.DataContext = ReferringManager.Instance;
-            essayComparisonPercentage.DataContext = EssayComparer.Instance;
-            useCurrentEssayAsFirstFile.DataContext = EssayComparer.Instance;
+            essayComparisonPercentage.DataContext = EssayComparisonManager.Instance;
+            useCurrentEssayAsFirstFile.DataContext = EssayComparisonManager.Instance;
 
             saveEssayButton.Click += SaveEssayButton_Click;
             compareEssayButton.Click += CompareEssayButton_Click;
@@ -53,8 +53,8 @@ namespace Referring.Client
             hitLabel.Visibility = Visibility.Hidden;
             essayComparisonPercentage.Visibility = Visibility.Hidden;
 
-            EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
-            EssayComparer.Instance.IsUseCurrentEssayAsFirstFile = true;
+            EssayComparisonManager.Instance.ComparisonType = ComparisonType.MainWordFulness;
+            EssayComparisonManager.Instance.IsUseCurrentEssayAsFirstFile = true;
 
             mainWordTypeRadioButton.IsChecked = true;
 
@@ -69,20 +69,20 @@ namespace Referring.Client
 
         private void MainWordTypeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+            EssayComparisonManager.Instance.ComparisonType = ComparisonType.MainWordFulness;
             mainWordTypeSelectionComboBox.IsEnabled = true;
         }
 
         private void MainWordTypeRadioButton_Unchecked(object sender, RoutedEventArgs e)
         {
-            EssayComparer.Instance.ComparisonType = ComparisonType.FullSentences;
+            EssayComparisonManager.Instance.ComparisonType = ComparisonType.FullSentences;
             mainWordTypeSelectionComboBox.IsEnabled = false;
         }
 
         private void FullSentenceTypeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             mainWordTypeSelectionComboBox.SelectedValue = types.First();
-            EssayComparer.Instance.ComparisonType = ComparisonType.FullSentences;
+            EssayComparisonManager.Instance.ComparisonType = ComparisonType.FullSentences;
         }
 
         private void MainWordTypeSelectionComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -92,16 +92,16 @@ namespace Referring.Client
             switch (selectionValue)
             {
                 case "по полноте":
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+                    EssayComparisonManager.Instance.ComparisonType = ComparisonType.MainWordFulness;
                     break;
                 case "по точности (с учетом погрешности)":
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithError;
+                    EssayComparisonManager.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithError;
                     break;
                 case "по точности (с использованием коэф. значимости)":
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithSignificanceKoefficient;
+                    EssayComparisonManager.Instance.ComparisonType = ComparisonType.MainWordAccuracyWithSignificanceKoefficient;
                     break;
                 default:
-                    EssayComparer.Instance.ComparisonType = ComparisonType.MainWordFulness;
+                    EssayComparisonManager.Instance.ComparisonType = ComparisonType.MainWordFulness;
                     break;
             }
         }
@@ -119,7 +119,7 @@ namespace Referring.Client
 
             if (dlg.ShowDialog() == true)
             {
-                EssayComparer.Instance.FisrtEssayPath = dlg.FileName;
+                EssayComparisonManager.Instance.FisrtEssayPath = dlg.FileName;
             }
         }
 
@@ -136,7 +136,7 @@ namespace Referring.Client
 
             if (dlg.ShowDialog() == true)
             {
-                EssayComparer.Instance.SecondEssayPath = dlg.FileName;
+                EssayComparisonManager.Instance.SecondEssayPath = dlg.FileName;
             }
         }
 
@@ -153,14 +153,14 @@ namespace Referring.Client
 
             Logger.LogInfo("Essays were loaded. Starting comparison.");
 
-            EssayComparer comparer = new EssayComparer();
+            EssayComparisonProcess comparisonProcess = new EssayComparisonProcess();
 
-            comparer.ProgressChanged += EssayComparison_ProgressChanged;
-            comparer.WorkCompleted += EssayComparison_WorkCompleted;
+            comparisonProcess.ProgressChanged += EssayComparison_ProgressChanged;
+            comparisonProcess.WorkCompleted += EssayComparison_WorkCompleted;
 
             //Run comparison process
             var syncContext = SynchronizationContext.Current;
-            Task task = Task.Factory.StartNew(comparer.RunComparison, syncContext);    
+            Task task = Task.Factory.StartNew(comparisonProcess.RunComparisonProcess, syncContext);    
         }
 
         private bool LoadEssays()
@@ -169,26 +169,26 @@ namespace Referring.Client
             string secondtEssay = string.Empty;
 
             bool isLoaded = false;
-            bool isFirstEssaySpecified = !string.IsNullOrEmpty(EssayComparer.Instance.FisrtEssayPath);
-            bool isSecondEssaySpecified = !string.IsNullOrEmpty(EssayComparer.Instance.SecondEssayPath);
+            bool isFirstEssaySpecified = !string.IsNullOrEmpty(EssayComparisonManager.Instance.FisrtEssayPath);
+            bool isSecondEssaySpecified = !string.IsNullOrEmpty(EssayComparisonManager.Instance.SecondEssayPath);
 
-            if (EssayComparer.Instance.IsUseCurrentEssayAsFirstFile && isSecondEssaySpecified)
+            if (EssayComparisonManager.Instance.IsUseCurrentEssayAsFirstFile && isSecondEssaySpecified)
             {
                 firstEssay = ReferringManager.Instance.ReferredText;
 
-                if (FileManager.IsExist(EssayComparer.Instance.SecondEssayPath))
+                if (FileManager.IsExist(EssayComparisonManager.Instance.SecondEssayPath))
                 {
-                    secondtEssay = FileManager.GetContent(EssayComparer.Instance.SecondEssayPath);
+                    secondtEssay = FileManager.GetContent(EssayComparisonManager.Instance.SecondEssayPath);
                     isLoaded = true;
                 }
             }
 
             else if (isFirstEssaySpecified && isSecondEssaySpecified)
             {
-                if (FileManager.IsExist(EssayComparer.Instance.FisrtEssayPath) && FileManager.IsExist(EssayComparer.Instance.SecondEssayPath))
+                if (FileManager.IsExist(EssayComparisonManager.Instance.FisrtEssayPath) && FileManager.IsExist(EssayComparisonManager.Instance.SecondEssayPath))
                 {
-                    firstEssay = FileManager.GetContent(EssayComparer.Instance.FisrtEssayPath);
-                    secondtEssay = FileManager.GetContent(EssayComparer.Instance.SecondEssayPath);
+                    firstEssay = FileManager.GetContent(EssayComparisonManager.Instance.FisrtEssayPath);
+                    secondtEssay = FileManager.GetContent(EssayComparisonManager.Instance.SecondEssayPath);
                     isLoaded = true;
                 }
             }
@@ -199,8 +199,8 @@ namespace Referring.Client
                 isLoaded = false;
             }
 
-            EssayComparer.Instance.FisrtEssay = firstEssay;
-            EssayComparer.Instance.SecondEssay = secondtEssay;
+            EssayComparisonManager.Instance.FisrtEssay = firstEssay;
+            EssayComparisonManager.Instance.SecondEssay = secondtEssay;
 
             return isLoaded;
         }
@@ -209,13 +209,13 @@ namespace Referring.Client
         {
             string extraMessage = string.Empty;
 
-            EssayComparer.Instance.IsComparisonCompete = true;
+            EssayComparisonManager.Instance.IsComparisonCompete = true;
 
-            if (EssayComparer.Instance.ComparisonType != ComparisonType.MainWordAccuracyWithSignificanceKoefficient)
+            if (EssayComparisonManager.Instance.ComparisonType != ComparisonType.MainWordAccuracyWithSignificanceKoefficient)
             {
                 hitLabel.Visibility = Visibility.Visible;
                 essayComparisonPercentage.Visibility = Visibility.Visible;
-                extraMessage = "\nРефераты идентичны на " + string.Format("{0:0}%", EssayComparer.Instance.EssayComparisonPercentage);
+                extraMessage = "\nРефераты идентичны на " + string.Format("{0:0}%", EssayComparisonManager.Instance.EssayComparisonPercentage);
             }
             else
             {
