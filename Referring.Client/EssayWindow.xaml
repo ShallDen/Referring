@@ -10,29 +10,35 @@
         <TextBox x:Name="essayTextBox" Margin="21,34,22,0" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
                  BorderBrush="#FF61B9E2" BorderThickness="1" Text="{Binding ReferredText, UpdateSourceTrigger=PropertyChanged}" FontFamily="Constantia" IsReadOnly="True" Height="291" VerticalAlignment="Top"/>
         <Label x:Name="label" Content="Реферат:" HorizontalAlignment="Left" Margin="15,7,0,0" VerticalAlignment="Top" FontFamily="Constantia"/>
-        <Button x:Name="saveEssayButton" Content="Сохранить реферат"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Top" HorizontalAlignment="Right" Width="131" Margin="0,339,22,0"/>
         <Grid HorizontalAlignment="Left" Width="183" Margin="547,0,0,360">
             <Label x:Name="countLabel" Content="Число предложений: " HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="127" FontFamily="Constantia" Margin="0,0,0,88"/>
             <Label x:Name="referredTextSentenceCount" Content="{Binding ReferredTextSentenceCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="51" HorizontalAlignment="Right" VerticalContentAlignment="Bottom" FontFamily="Comic Sans MS" Height="30" FontSize="14" Margin="0,0,0,88"/>
         </Grid>
-        <GroupBox x:Name="comparisonGroupBox" Header="Сравнение рефератов" HorizontalAlignment="Left" Margin="21,330,0,0" VerticalAlignment="Top" Height="125" Width="565" FontFamily="Constantia"
+        <GroupBox x:Name="comparisonGroupBox" Header="Сравнение рефератов" HorizontalAlignment="Left" Margin="21,330,0,0" VerticalAlignment="Top" Height="128" Width="539" FontFamily="Constantia"
                   BorderBrush="#FF61B9E2" BorderThickness="1">
-            <Grid HorizontalAlignment="Left" Height="104" VerticalAlignment="Top" Width="552" Margin="3,-3,-2,0">
-                <Label x:Name="hitLabel" Content="Совпадение: " HorizontalAlignment="Left" Margin="461,4,0,0" VerticalAlignment="Top"/>
-                <TextBlock x:Name="essayComparisonPercentage" Text="{Binding EssayComparisonPercentage, StringFormat=\{0:0\}%, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="488,27,0,0" VerticalAlignment="Top" Width="40" FontFamily="Comic Sans MS" Height="20" FontSize="14"/>
+            <Grid HorizontalAlignment="Left" Height="104" VerticalAlignment="Top" Width="536" Margin="3,-3,-12,0">
+                <Label x:Name="hitLabel" Content="Совпадение: " HorizontalAlignment="Left" Margin="439,5,0,0" VerticalAlignment="Top"/>
+                <TextBlock x:Name="essayComparisonPercentage" Text="{Binding EssayComparisonPercentage, StringFormat=\{0:0\}%, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="466,27,0,0" VerticalAlignment="Top" Width="40" FontFamily="Comic Sans MS" Height="20" FontSize="14"/>
                 <RadioButton x:Name="mainWordTypeRadioButton" Content="на основе значимых слов" HorizontalAlignment="Left" Margin="10,53,0,0" VerticalAlignment="Top"/>
                 <RadioButton x:Name="fullSentenceTypeRadioButton" Content="на основе полных предложений" HorizontalAlignment="Left" Margin="10,33,0,0" VerticalAlignment="Top"/>
-                <ComboBox x:Name="mainWordTypeSelectionComboBox" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="220" Height="21" Background="{x:Null}"/>
-                <Label x:Name="chooseComparisonType" Content="Выберите тип сравнения:" HorizontalAlignment="Left" Margin="0,8,0,0" VerticalAlignment="Top"/>
-                <Label x:Name="chooseFiles" Content="Выберите файлы для сравнения:" HorizontalAlignment="Left" Margin="243,4,0,0" VerticalAlignment="Top"/>
-                <Button x:Name="chooseFisrtFileButton" Content="Реферат #1" HorizontalAlignment="Left" Margin="249,29,0,0" VerticalAlignment="Top" Width="78" Height="26" Background="{x:Null}"/>
-                <Button x:Name="chooseSecondFileButton" Content="Реферат #2" HorizontalAlignment="Left" Margin="346,29,0,0" VerticalAlignment="Top" Width="78" Height="26" Background="{x:Null}"/>
+                <ComboBox x:Name="mainWordTypeSelectionComboBox" HorizontalAlignment="Left" Margin="10,76,0,0" VerticalAlignment="Top" Width="190" Height="26" Background="{x:Null}" VerticalContentAlignment="Center"/>
+                <Label x:Name="chooseComparisonType" Content="Выберите тип сравнения:" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top"/>
+                <Label x:Name="chooseFiles" Content="Выберите файлы для сравнения:" HorizontalAlignment="Left" Margin="233,5,0,0" VerticalAlignment="Top"/>
+                <Button x:Name="chooseFisrtFileButton" Content="Реферат #1" HorizontalAlignment="Left" Margin="239,34,0,0" VerticalAlignment="Top" Width="82" Height="26" Background="{x:Null}"/>
+                <Button x:Name="chooseSecondFileButton" Content="Реферат #2" HorizontalAlignment="Left" Margin="336,34,0,0" VerticalAlignment="Top" Width="79" Height="26" Background="{x:Null}"/>
                 <CheckBox x:Name="useCurrentEssayAsFirstFile" IsChecked="{Binding Path=IsUseCurrentEssayAsFirstFile, UpdateSourceTrigger=PropertyChanged}" 
-                          HorizontalAlignment="Left" Margin="249,62,0,0" VerticalAlignment="Top" Width="191" Height="31">
-                    <TextBlock Text="Использовать текущий реферат в качестве 1-ого файла" Height="31" Width="175" TextWrapping="Wrap"/>
+                          HorizontalAlignment="Left" Margin="239,71,0,0" VerticalAlignment="Top" Width="193" Height="31">
+                    <TextBlock Text="Использовать построенный реферат в качестве 1-ого файла" Height="31" Width="172" TextWrapping="Wrap"/>
                 </CheckBox>
             </Grid>
         </GroupBox>
-        <Button x:Name="compareEssayButton" Content="Сравнить рефераты"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Top" HorizontalAlignment="Right" Width="131" Margin="0,381,22,0"/>
+        <GroupBox x:Name="groupBoxAction" Header="Действия" HorizontalAlignment="Left" Margin="570,330,0,0" VerticalAlignment="Top" FontFamily="Constantia" Height="128" Width="160"
+                  BorderBrush="#FF61B9E2" BorderThickness="1">
+            <Grid>
+                <Button x:Name="saveEssayButton" Content="Сохранить реферат"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Top" HorizontalAlignment="Right" Width="131" Margin="0,11,8,0"/>
+                <Button x:Name="compareEssayButton" Content="Сравнить рефераты"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Top" HorizontalAlignment="Right" Width="131" Margin="0,59,8,0"/>
+
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
