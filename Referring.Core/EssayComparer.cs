@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Referring.Core;
 using System.ComponentModel;
 using System.IO;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Referring.Core
 {
@@ -17,14 +19,20 @@ namespace Referring.Core
         MainWordAccuracyWithSignificanceKoefficient
     }
 
+    public delegate void EssayComparisonProgressChangeDelegate(double percent);
+    public delegate void EssayComparisonCompleteDelegate(string elapsedTime);
+
     public class EssayComparer : INotifyPropertyChanged
     {
         private double mEssayComparisonPercentage;
         private bool mIsUseCurrentEssayAsFirstFile;
+        private SynchronizationContext context;
 
         private static EssayComparer instance;
 
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EssayComparisonProgressChangeDelegate ProgressChanged;
+        public event EssayComparisonCompleteDelegate WorkCompleted;
 
         public static EssayComparer Instance
         {
@@ -33,8 +41,11 @@ namespace Referring.Core
 
         public ComparisonType ComparisonType { get; set; }
         public bool IsComparisonCompete { get; set; }
+        public string FisrtEssay { get; set; }
         public string FisrtEssayPath { get; set; }
+        public string SecondEssay { get; set; }
         public string SecondEssayPath { get; set; }
+        public double ProgressPercentageCurrent { get; set; }
 
         public bool IsUseCurrentEssayAsFirstFile
         {
@@ -64,12 +75,43 @@ namespace Referring.Core
             }
         }
 
-        public double Compare(ComparisonType comparisonType, string firstEssay, string secondtEssay)
+        public void RunComparison(object param)
         {
+            context = (SynchronizationContext)param;
+
+            SetProgressPercentage(0);
+
+            Logger.LogInfo("Starting comparison process...");
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            EssayComparer.Instance.IsComparisonCompete = false;
+            EssayComparer.Instance.EssayComparisonPercentage = Compare();
+
+            stopwatch.Stop();
+
+            var ts = stopwatch.Elapsed;
+            var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+
+            Logger.LogInfo("Comparison completed. Elapsed time: " + elapsedTime);
+
+            SetProgressPercentage(100);
+            context.Send(OnWorkCompleted, elapsedTime);
+        }
+
+        private double Compare()
+        {
+            ComparisonType comparisonType = EssayComparer.Instance.ComparisonType;
+            string firstEssay = EssayComparer.Instance.FisrtEssay;
+            string secondtEssay = EssayComparer.Instance.SecondEssay;
+
             var firstEssayStatistics = GetWordStatistics(firstEssay);
             var secondEssayStatistics = GetWordStatistics(secondtEssay);
 
             Logger.LogInfo("Comparison type is '" + comparisonType.ToString() + "'");
+            Logger.LogInfo("Fisrt essay contains " + firstEssayStatistics.Count  + " words.");
+            Logger.LogInfo("Second essay contains " + secondEssayStatistics.Count + " words.");
 
             double info = 0;
             switch (comparisonType)
@@ -91,8 +133,6 @@ namespace Referring.Core
                     break;
             }
 
-            IsComparisonCompete = true;
-
             return info;
         }
 
@@ -108,42 +148,62 @@ namespace Referring.Core
                 .ClearWhiteSpacesInList()
                 .RemoveEmptyItemsInList();
 
+            double progressPercentageMax = 100;
+            double step = (progressPercentageMax - EssayComparer.Instance.ProgressPercentageCurrent) / secondEssaySentences.Count;
+
             double requiredHits = secondEssaySentences.Count;
+            double comparisonPercentage = 0;
             double hits = 0;
 
             foreach (var sentence in secondEssaySentences)
             {
                 if (firstEssaySentences.Contains(sentence))
                     ++hits;
+                AddProgressPercentage(step);
             }
 
-            double percentage = hits / requiredHits * 100;
+            if (requiredHits > 0)
+                comparisonPercentage = hits / requiredHits * 100;
+            else
+                comparisonPercentage = 0;
 
-            return percentage;
+            return comparisonPercentage;
         }
 
-        public double CompareMainWordFulness(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
+        private double CompareMainWordFulness(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
         {
             //Сравнение по полноте
+            double progressPercentageMax = 100;
+            double step = (progressPercentageMax - EssayComparer.Instance.ProgressPercentageCurrent) / secondEssayStatistics.Count;
+
             double requiredHits = secondEssayStatistics.Count;
+            double comparisonPercentage = 0;
             double hits = 0;
 
             foreach (var word in secondEssayStatistics)
             {
                 if (fisrtEssayStatistics.Where(c=>c.Value == word.Value).Any())
                     ++hits;
+                AddProgressPercentage(step);
             }
 
-            double percentage = hits / requiredHits * 100;
+            if (requiredHits > 0)
+                comparisonPercentage = hits / requiredHits * 100;
+            else
+                comparisonPercentage = 0;
 
-            return percentage;
+            return comparisonPercentage;
         }
 
-        public double CompareMainWordAccuracyWithError(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
+        private double CompareMainWordAccuracyWithError(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
         {
             //Сравнение по точности с погрешностью
+            double progressPercentageMax = 100;
+            double step = (progressPercentageMax - EssayComparer.Instance.ProgressPercentageCurrent) / secondEssayStatistics.Count;
+
             double error = 0.2;
             double requiredHits = secondEssayStatistics.Count;
+            double comparisonPercentage = 0;
             double hits = 0;
 
             foreach (var word in secondEssayStatistics)
@@ -174,20 +234,28 @@ namespace Referring.Core
                     if (isHit)
                         ++hits;
                 }
+
+                AddProgressPercentage(step);
             }
 
-            double percentage = hits / requiredHits * 100;
+            if (requiredHits > 0)
+                comparisonPercentage = hits / requiredHits * 100;
+            else
+                comparisonPercentage = 0;
 
-            return percentage;
+            return comparisonPercentage;
         }
 
-        public double CompareMainWordAccuracyWithSignificanceCoefficient(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
+        private double CompareMainWordAccuracyWithSignificanceCoefficient(List<Word> fisrtEssayStatistics, List<Word> secondEssayStatistics)
         {
             //Сравнение по точности с использованием коэф. значимости
+            double progressPercentageMax = 100;
+            double step = (progressPercentageMax - EssayComparer.Instance.ProgressPercentageCurrent) / secondEssayStatistics.Count;
+
             double hits = 0;
             double weightRate = 0;
+            double comparisonPercentage = 0;
 
-            //before your loop
             var statistics = new StringBuilder();
 
             var header = string.Format("Слово;Вес #1;Вес #2;Отношение");
@@ -207,6 +275,8 @@ namespace Referring.Core
                     weightRate += wordRate;
                     ++hits;
                 }
+
+                AddProgressPercentage(step);
             }
 
             if (FileManager.IsExist(FileManager.FileFullPath))
@@ -229,9 +299,12 @@ namespace Referring.Core
                 Logger.LogError(string.Format("Path: {0} isn't valid", FileManager.FileFullPath));
             }
 
-            double percentage = weightRate / hits * 100;
+            if (hits > 0)
+                comparisonPercentage = weightRate / hits * 100;
+            else
+                comparisonPercentage = 0;
 
-            return percentage;
+            return comparisonPercentage;
         }
 
         public List<Word> GetWordStatistics(string essay)
@@ -254,5 +327,31 @@ namespace Referring.Core
 
             return referringProcess.GoodWordList;
         }
+
+        private void OnProgressChanged(object i)
+        {
+            double percent = Convert.ToDouble(i);
+
+            if (ProgressChanged != null)
+                ProgressChanged(percent);
+        }
+
+        private void OnWorkCompleted(object elapsedTime)
+        {
+            if (WorkCompleted != null)
+                WorkCompleted(elapsedTime.ToString());
+        }
+
+        private void SetProgressPercentage(double value)
+        {
+            ProgressPercentageCurrent = value;
+            context.Send(OnProgressChanged, ProgressPercentageCurrent);
+        }
+
+        private void AddProgressPercentage(double value)
+        {
+            ProgressPercentageCurrent += value;
+            context.Send(OnProgressChanged, ProgressPercentageCurrent);
+        }   
     }
 }

@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Referring.Client"
         mc:Ignorable="d"
-        Title="Реферат" Height="527" Width="768" Icon="Images/ShallDen.png" Style="{DynamicResource MainWindowStyle}" MinHeight="380" MinWidth="640">
+        Title="Реферат" Height="557" Width="768" Icon="Images/ShallDen.png" Style="{DynamicResource MainWindowStyle}" MinHeight="380" MinWidth="640">
     <Grid>
-        <TextBox x:Name="essayTextBox" Margin="21,34,22,0" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
+        <TextBox x:Name="essayTextBox" Margin="21,34,21,0" TextWrapping="Wrap"  VerticalScrollBarVisibility="Auto"
                  BorderBrush="#FF61B9E2" BorderThickness="1" Text="{Binding ReferredText, UpdateSourceTrigger=PropertyChanged}" FontFamily="Constantia" IsReadOnly="True" Height="291" VerticalAlignment="Top"/>
         <Label x:Name="label" Content="Реферат:" HorizontalAlignment="Left" Margin="15,7,0,0" VerticalAlignment="Top" FontFamily="Constantia"/>
         <Grid HorizontalAlignment="Left" Width="183" Margin="547,0,0,360">
-            <Label x:Name="countLabel" Content="Число предложений: " HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="127" FontFamily="Constantia" Margin="0,0,0,88"/>
-            <Label x:Name="referredTextSentenceCount" Content="{Binding ReferredTextSentenceCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="51" HorizontalAlignment="Right" VerticalContentAlignment="Bottom" FontFamily="Comic Sans MS" Height="30" FontSize="14" Margin="0,0,0,88"/>
+            <Label x:Name="countLabel" Content="Число предложений: " HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="127" FontFamily="Constantia" Margin="0,0,0,118"/>
+            <Label x:Name="referredTextSentenceCount" Content="{Binding ReferredTextSentenceCount, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Bottom" Width="51" HorizontalAlignment="Right" VerticalContentAlignment="Bottom" FontFamily="Comic Sans MS" Height="30" FontSize="14" Margin="0,0,0,118"/>
         </Grid>
         <GroupBox x:Name="comparisonGroupBox" Header="Сравнение рефератов" HorizontalAlignment="Left" Margin="21,330,0,0" VerticalAlignment="Top" Height="128" Width="539" FontFamily="Constantia"
                   BorderBrush="#FF61B9E2" BorderThickness="1">
@@ -32,13 +32,16 @@
                 </CheckBox>
             </Grid>
         </GroupBox>
-        <GroupBox x:Name="groupBoxAction" Header="Действия" HorizontalAlignment="Left" Margin="570,330,0,0" VerticalAlignment="Top" FontFamily="Constantia" Height="128" Width="160"
+        <GroupBox x:Name="groupBoxAction" Header="Действия" HorizontalAlignment="Left" Margin="570,330,0,0" VerticalAlignment="Top" FontFamily="Constantia" Height="128" Width="161"
                   BorderBrush="#FF61B9E2" BorderThickness="1">
             <Grid>
                 <Button x:Name="saveEssayButton" Content="Сохранить реферат"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Top" HorizontalAlignment="Right" Width="131" Margin="0,11,8,0"/>
                 <Button x:Name="compareEssayButton" Content="Сравнить рефераты"  Background="{x:Null}" BorderBrush="Black" FontFamily="Constantia" Height="37" VerticalAlignment="Top" HorizontalAlignment="Right" Width="131" Margin="0,59,8,0"/>
-
             </Grid>
         </GroupBox>
+        <Grid HorizontalAlignment="Left" Height="23" Margin="21,0,0,15" VerticalAlignment="Bottom" Width="710">
+            <ProgressBar x:Name="progressBar" HorizontalAlignment="Left" Height="24" Margin="0,0,0,-1" VerticalAlignment="Top" Width="710" BorderBrush="#FF61B9E2" Background="{x:Null}"/>
+            <TextBlock Text="{Binding ElementName=progressBar, Path=Value, StringFormat={}{0:0}%}" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Comic Sans MS" />
+        </Grid>
     </Grid>
 </Window>

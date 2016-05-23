@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Referring.Core;
 using Microsoft.Win32;
+using System.Threading;
 
 namespace Referring.Client
 {
@@ -141,86 +142,32 @@ namespace Referring.Client
 
         private void CompareEssayButton_Click(object sender, RoutedEventArgs e)
         {
-            string firstEssay = string.Empty;
-            string secondtEssay = string.Empty;
-            string extraMessage = string.Empty;
-
             if (ReferringManager.Instance.IsReferringRunning)
             {
                 MessageManager.ShowWarning("Процесс реферирования уже запущен. Пожалуйста, дождитесь окончания операции.");
                 return;
             }
 
-            if (!LoadEssays(ref firstEssay, ref secondtEssay))
+            if (!LoadEssays())
                 return;
 
             Logger.LogInfo("Essays were loaded. Starting comparison.");
 
             EssayComparer comparer = new EssayComparer();
 
-            var percentage = comparer.Compare(EssayComparer.Instance.ComparisonType, firstEssay, secondtEssay);
+            comparer.ProgressChanged += EssayComparison_ProgressChanged;
+            comparer.WorkCompleted += EssayComparison_WorkCompleted;
 
-            if (EssayComparer.Instance.ComparisonType != ComparisonType.MainWordAccuracyWithSignificanceKoefficient)
-            {
-                EssayComparer.Instance.EssayComparisonPercentage = percentage;
-
-                hitLabel.Visibility = Visibility.Visible;
-                essayComparisonPercentage.Visibility = Visibility.Visible;
-                extraMessage = "\nРефераты идентичны на " + string.Format("{0:0}%", EssayComparer.Instance.EssayComparisonPercentage);
-            }
-            else
-            {
-                hitLabel.Visibility = Visibility.Hidden;
-                essayComparisonPercentage.Visibility = Visibility.Hidden;
-
-                extraMessage = "Полученная статистика была сохранена в CSV файл.";
-            }
-
-            MessageManager.ShowInformation("Сравнение рефератов завершено. " + extraMessage);
+            //Run comparison process
+            var syncContext = SynchronizationContext.Current;
+            Task task = Task.Factory.StartNew(comparer.RunComparison, syncContext);    
         }
 
-        private void SaveEssayButton_Click(object sender, RoutedEventArgs e)
+        private bool LoadEssays()
         {
-            if (!ReferringManager.Instance.IsReferringCompete)
-            {
-                MessageManager.ShowWarning("Пожалуйста, для начала выполните операцию реферирования.");
-                Logger.LogWarning("Please, perform referring process before saving summary.");
-                return;
-            }
+            string firstEssay = string.Empty;
+            string secondtEssay = string.Empty;
 
-            if (FileManager.IsExist(FileManager.FileFullPath))
-            {
-                string fileName = string.Concat(FileManager.FileDirectory + "Summary_" + FileManager.FileName);
-                Logger.LogInfo("Saving essay: " + fileName);
-
-                if (FileManager.IsExist(fileName))
-                    FileManager.Delete(fileName);
-
-                FileManager.SaveContent(ReferringManager.Instance.ReferredText, fileName);
-
-                MessageManager.ShowInformation(string.Format("Реферат сохранен. \nВы можете найти его в папке {0}", FileManager.FileDirectory));
-                Logger.LogInfo("Essay was saved.");
-            }
-            else
-            {
-                MessageManager.ShowError(string.Format("Путь: {0} не верный.", FileManager.FileFullPath));
-                Logger.LogError(string.Format("Path: {0} isn't valid", FileManager.FileFullPath));
-            }
-        }
-
-
-        private void UseCurrentEssayAsFirstFile_Unchecked(object sender, RoutedEventArgs e)
-        {
-            chooseFisrtFileButton.IsEnabled = true;
-        }
-
-        private void UseCurrentEssayAsFirstFile_Checked(object sender, RoutedEventArgs e)
-        {
-            chooseFisrtFileButton.IsEnabled = false;
-        }
-
-        private bool LoadEssays(ref string firstEssay, ref string secondtEssay)
-        {
             bool isLoaded = false;
             bool isFirstEssaySpecified = !string.IsNullOrEmpty(EssayComparer.Instance.FisrtEssayPath);
             bool isSecondEssaySpecified = !string.IsNullOrEmpty(EssayComparer.Instance.SecondEssayPath);
@@ -252,7 +199,83 @@ namespace Referring.Client
                 isLoaded = false;
             }
 
+            EssayComparer.Instance.FisrtEssay = firstEssay;
+            EssayComparer.Instance.SecondEssay = secondtEssay;
+
             return isLoaded;
+        }
+
+        private void EssayComparison_WorkCompleted(string elapsedTime)
+        {
+            string extraMessage = string.Empty;
+
+            EssayComparer.Instance.IsComparisonCompete = true;
+
+            if (EssayComparer.Instance.ComparisonType != ComparisonType.MainWordAccuracyWithSignificanceKoefficient)
+            {
+                hitLabel.Visibility = Visibility.Visible;
+                essayComparisonPercentage.Visibility = Visibility.Visible;
+                extraMessage = "\nРефераты идентичны на " + string.Format("{0:0}%", EssayComparer.Instance.EssayComparisonPercentage);
+            }
+            else
+            {
+                hitLabel.Visibility = Visibility.Hidden;
+                essayComparisonPercentage.Visibility = Visibility.Hidden;
+
+                extraMessage = "Полученная статистика была сохранена в CSV файл.";
+            }
+
+            MessageManager.ShowInformation("Сравнение рефератов завершено. " + extraMessage + "\nВремя операции: " + elapsedTime);
+            Logger.LogInfo("Сравнение рефератов завершено. " + extraMessage + "\nВремя операции: " + elapsedTime);
+        }
+
+        private void SaveEssayButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ReferringManager.Instance.IsReferringCompete)
+            {
+                MessageManager.ShowWarning("Пожалуйста, для начала выполните операцию реферирования.");
+                Logger.LogWarning("Please, perform referring process before saving summary.");
+                return;
+            }
+
+            if (FileManager.IsExist(FileManager.FileFullPath))
+            {
+                string fileName = string.Concat(FileManager.FileDirectory + "Summary_" + FileManager.FileName);
+                Logger.LogInfo("Saving essay: " + fileName);
+
+                if (FileManager.IsExist(fileName))
+                    FileManager.Delete(fileName);
+
+                FileManager.SaveContent(ReferringManager.Instance.ReferredText, fileName);
+
+                MessageManager.ShowInformation(string.Format("Реферат сохранен. \nВы можете найти его в папке {0}", FileManager.FileDirectory));
+                Logger.LogInfo("Essay was saved.");
+            }
+            else
+            {
+                MessageManager.ShowError(string.Format("Путь: {0} не верный.", FileManager.FileFullPath));
+                Logger.LogError(string.Format("Path: {0} isn't valid", FileManager.FileFullPath));
+            }
+        }
+
+        private void UseCurrentEssayAsFirstFile_Unchecked(object sender, RoutedEventArgs e)
+        {
+            chooseFisrtFileButton.IsEnabled = true;
+        }
+
+        private void UseCurrentEssayAsFirstFile_Checked(object sender, RoutedEventArgs e)
+        {
+            chooseFisrtFileButton.IsEnabled = false;
+        }
+
+        public void SetProgressBarValue(double value)
+        {
+            progressBar.Value = value;
+        }
+
+        private void EssayComparison_ProgressChanged(double percent)
+        {
+            SetProgressBarValue(percent);
         }
     }
 }
