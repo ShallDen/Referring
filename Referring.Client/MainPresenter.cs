@@ -119,9 +119,9 @@ namespace Referring.Client
             {
                 referring = new ReferringProcess();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                MessageManager.ShowWarning(ex.InnerException.Message);
+                MessageManager.ShowError(ex.InnerException.Message);
                 Logger.LogError(ex.InnerException.Message);
                 return;
             }

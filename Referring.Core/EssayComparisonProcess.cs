@@ -19,27 +19,34 @@ namespace Referring.Core
 
         public void RunComparisonProcess(object param)
         {
-            context = (SynchronizationContext)param;
+            try
+            {
+                context = (SynchronizationContext)param;
 
-            SetProgressPercentage(0);
+                SetProgressPercentage(0);
 
-            Logger.LogInfo("Starting comparison process...");
+                Logger.LogInfo("Starting comparison process...");
 
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
 
-            EssayComparisonManager.Instance.IsComparisonCompete = false;
-            EssayComparisonManager.Instance.EssayComparisonPercentage = Compare();
+                EssayComparisonManager.Instance.IsComparisonCompete = false;
+                EssayComparisonManager.Instance.EssayComparisonPercentage = Compare();
 
-            stopwatch.Stop();
+                stopwatch.Stop();
 
-            var ts = stopwatch.Elapsed;
-            var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
+                var ts = stopwatch.Elapsed;
+                var elapsedTime = string.Format("{0:00}:{1:00}:{2:00}.{3:000}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds);
 
-            Logger.LogInfo("Comparison completed. Elapsed time: " + elapsedTime);
+                Logger.LogInfo("Comparison completed. Elapsed time: " + elapsedTime);
 
-            SetProgressPercentage(100);
-            context.Send(OnWorkCompleted, elapsedTime);
+                SetProgressPercentage(100);
+                context.Send(OnWorkCompleted, elapsedTime);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Here is some problem..." + ex);
+            }
         }
 
         private double Compare()

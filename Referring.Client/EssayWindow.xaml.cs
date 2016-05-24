@@ -176,9 +176,23 @@ namespace Referring.Client
             if (!LoadEssays())
                 return;
 
+            string firstEssayPath = !string.IsNullOrEmpty(EssayComparisonManager.Instance.FisrtEssayPath) ? EssayComparisonManager.Instance.FisrtEssayPath : "current build essay";
+            Logger.LogInfo("Fisrt essay is " + firstEssayPath);
+            Logger.LogInfo("Second essay is " + EssayComparisonManager.Instance.SecondEssayPath);
             Logger.LogInfo("Essays were loaded. Starting comparison.");
 
-            EssayComparisonProcess comparisonProcess = new EssayComparisonProcess();
+            EssayComparisonProcess comparisonProcess = null;
+
+            try
+            {
+                comparisonProcess = new EssayComparisonProcess();
+            }
+            catch (Exception ex)
+            {
+                MessageManager.ShowError(ex.InnerException.Message);
+                Logger.LogError(ex.InnerException.Message);
+                return;
+            }
 
             comparisonProcess.ProgressChanged += EssayComparison_ProgressChanged;
             comparisonProcess.WorkCompleted += EssayComparison_WorkCompleted;
