@@ -24,8 +24,10 @@
                 <ComboBox x:Name="mainWordTypeSelectionComboBox" HorizontalAlignment="Left" Margin="10,76,0,0" VerticalAlignment="Top" Width="190" Height="26" Background="{x:Null}" VerticalContentAlignment="Center"/>
                 <Label x:Name="chooseComparisonType" Content="Выберите тип сравнения:" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top"/>
                 <Label x:Name="chooseFiles" Content="Выберите файлы для сравнения:" HorizontalAlignment="Left" Margin="233,5,0,0" VerticalAlignment="Top"/>
-                <Button x:Name="chooseFisrtFileButton" Content="Реферат #1" HorizontalAlignment="Left" Margin="239,34,0,0" VerticalAlignment="Top" Width="82" Height="26" Background="{x:Null}"/>
-                <Button x:Name="chooseSecondFileButton" Content="Реферат #2" HorizontalAlignment="Left" Margin="336,34,0,0" VerticalAlignment="Top" Width="79" Height="26" Background="{x:Null}"/>
+                <Button x:Name="chooseFisrtFileButton" Content="Реферат #1" HorizontalAlignment="Left" Margin="239,34,0,0" VerticalAlignment="Top" Width="82" Height="26" Background="{x:Null}" 
+                        ToolTip="{Binding Path=FisrtEssayToolTipText, UpdateSourceTrigger=PropertyChanged}"/>
+                <Button x:Name="chooseSecondFileButton" Content="Реферат #2" HorizontalAlignment="Left" Margin="336,34,0,0" VerticalAlignment="Top" Width="79" Height="26" Background="{x:Null}" 
+                        ToolTip="{Binding Path=SecondEssayToolTipText, UpdateSourceTrigger=PropertyChanged}"/>
                 <CheckBox x:Name="useCurrentEssayAsFirstFile" IsChecked="{Binding Path=IsUseCurrentEssayAsFirstFile, UpdateSourceTrigger=PropertyChanged}" 
                           HorizontalAlignment="Left" Margin="239,71,0,0" VerticalAlignment="Top" Width="193" Height="31">
                     <TextBlock Text="Использовать построенный реферат в качестве 1-ого файла" Height="31" Width="172" TextWrapping="Wrap"/>

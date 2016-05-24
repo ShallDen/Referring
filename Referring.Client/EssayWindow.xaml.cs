@@ -33,11 +33,25 @@ namespace Referring.Client
         {
             InitializeComponent();
 
+            BindControls();
+            HookEvents();
+            PerformUIChanges();
+            FillToolTips();
+            FillCombobox();
+        }
+
+        private void BindControls()
+        {
             essayTextBox.DataContext = ReferringManager.Instance;
             referredTextSentenceCount.DataContext = ReferringManager.Instance;
             essayComparisonPercentage.DataContext = EssayComparisonManager.Instance;
             useCurrentEssayAsFirstFile.DataContext = EssayComparisonManager.Instance;
+            chooseFisrtFileButton.DataContext = EssayComparisonManager.Instance;
+            chooseSecondFileButton.DataContext = EssayComparisonManager.Instance;
+        }
 
+        private void HookEvents()
+        {
             saveEssayButton.Click += SaveEssayButton_Click;
             compareEssayButton.Click += CompareEssayButton_Click;
             chooseFisrtFileButton.Click += ChooseFisrtFileButton_Click;
@@ -49,16 +63,25 @@ namespace Referring.Client
             mainWordTypeRadioButton.Checked += MainWordTypeRadioButton_Checked;
             mainWordTypeRadioButton.Unchecked += MainWordTypeRadioButton_Unchecked;
             mainWordTypeSelectionComboBox.SelectionChanged += MainWordTypeSelectionComboBox_SelectionChanged;
+        }
+
+        private void PerformUIChanges()
+        {
+            EssayComparisonManager.Instance.IsUseCurrentEssayAsFirstFile = true;
 
             hitLabel.Visibility = Visibility.Hidden;
             essayComparisonPercentage.Visibility = Visibility.Hidden;
-
-            EssayComparisonManager.Instance.ComparisonType = ComparisonType.MainWordFulness;
-            EssayComparisonManager.Instance.IsUseCurrentEssayAsFirstFile = true;
-
             mainWordTypeRadioButton.IsChecked = true;
+        }
 
-            FillCombobox();
+        private void FillToolTips()
+        {
+            string fileNotLoaded = "Файл не загружен";
+            bool isFirstEssaySpecified = !string.IsNullOrEmpty(EssayComparisonManager.Instance.FisrtEssayPath);
+            bool isSecondEssaySpecified = !string.IsNullOrEmpty(EssayComparisonManager.Instance.SecondEssayPath);
+
+            EssayComparisonManager.Instance.FisrtEssayToolTipText = !isFirstEssaySpecified ? fileNotLoaded : EssayComparisonManager.Instance.FisrtEssayPath;
+            EssayComparisonManager.Instance.SecondEssayToolTipText = !isSecondEssaySpecified ? fileNotLoaded : EssayComparisonManager.Instance.SecondEssayPath;
         }
 
         private void FillCombobox()
@@ -120,6 +143,7 @@ namespace Referring.Client
             if (dlg.ShowDialog() == true)
             {
                 EssayComparisonManager.Instance.FisrtEssayPath = dlg.FileName;
+                EssayComparisonManager.Instance.FisrtEssayToolTipText = dlg.FileName;
             }
         }
 
@@ -137,6 +161,7 @@ namespace Referring.Client
             if (dlg.ShowDialog() == true)
             {
                 EssayComparisonManager.Instance.SecondEssayPath = dlg.FileName;
+                EssayComparisonManager.Instance.SecondEssayToolTipText = dlg.FileName;
             }
         }
 
@@ -181,6 +206,12 @@ namespace Referring.Client
                     secondtEssay = FileManager.GetContent(EssayComparisonManager.Instance.SecondEssayPath);
                     isLoaded = true;
                 }
+                else
+                {
+                    MessageManager.ShowWarning("Ошибка при загрузке файла. Реферат не найден!");
+                    Logger.LogWarning("Ошибка при загрузке файла. Реферат не найден!");
+                    isLoaded = false;
+                }
             }
 
             else if (isFirstEssaySpecified && isSecondEssaySpecified)
@@ -190,6 +221,12 @@ namespace Referring.Client
                     firstEssay = FileManager.GetContent(EssayComparisonManager.Instance.FisrtEssayPath);
                     secondtEssay = FileManager.GetContent(EssayComparisonManager.Instance.SecondEssayPath);
                     isLoaded = true;
+                }
+                else
+                {
+                    MessageManager.ShowWarning("Ошибка при загрузке файла. Реферат не найден!");
+                    Logger.LogWarning("Ошибка при загрузке файла. Реферат не найден!");
+                    isLoaded = false;
                 }
             }
             else
