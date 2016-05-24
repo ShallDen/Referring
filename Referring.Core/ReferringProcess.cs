@@ -177,10 +177,10 @@ namespace Referring.Core
             context.Send(OnProgressChanged, ReferringManager.Instance.ProgressPercentageCurrent);
         }
 
-        public void CalculateWordWeights()
+        public void CalculateWordWeights(bool isComparison = false, double percentageMax = 60, EssayComparisonAddProgressPercentage AddPercentage = null)
         {
-            double percentageMax = 60;
-            double step = (percentageMax - ReferringManager.Instance.ProgressPercentageCurrent) / sentenceList.Count;
+            double step = !isComparison ? (percentageMax - ReferringManager.Instance.ProgressPercentageCurrent) / sentenceList.Count 
+                : (percentageMax - EssayComparisonManager.Instance.ProgressPercentageCurrent) / sentenceList.Count;
 
             int sentenceIndex = 0;
 
@@ -270,8 +270,17 @@ namespace Referring.Core
                 ++sentenceIndex;
                 goodSentenceList.Add(new Sentence { Index = sentenceIndex, Value = sentence, Weight = 0 });
 
-                if(UsePercentage)
-                    AddProgressPercentage(step);
+                if (!isComparison)
+                {
+                    //Add percentage by ReferringProcess class
+                    if (UsePercentage)
+                        AddProgressPercentage(step);
+                }
+                else
+                {
+                    //Add percentage by EssayComparisonProcess class
+                    AddPercentage(step);
+                } 
             }
 
             Logger.LogInfo("Word weights are calculated.");

@@ -9,6 +9,7 @@ namespace Referring.Core
 {
     public delegate void EssayComparisonProgressChangeDelegate(double percent);
     public delegate void EssayComparisonCompleteDelegate(string elapsedTime);
+    public delegate void EssayComparisonAddProgressPercentage(double percent);
 
     public class EssayComparisonProcess
     {
@@ -55,8 +56,9 @@ namespace Referring.Core
             string firstEssay = EssayComparisonManager.Instance.FisrtEssay;
             string secondtEssay = EssayComparisonManager.Instance.SecondEssay;
 
-            var firstEssayStatistics = GetWordStatistics(firstEssay);
-            var secondEssayStatistics = GetWordStatistics(secondtEssay);
+            //Send essay and max percentage to get statistics and displaying progress
+            var firstEssayStatistics = GetWordStatistics(firstEssay, 45);
+            var secondEssayStatistics = GetWordStatistics(secondtEssay, 90);
 
             Logger.LogInfo("Comparison type is '" + comparisonType.ToString() + "'");
             Logger.LogInfo("Fisrt essay contains " + firstEssayStatistics.Count + " words.");
@@ -261,7 +263,7 @@ namespace Referring.Core
             return comparisonPercentage;
         }
 
-        public List<Word> GetWordStatistics(string essay)
+        public List<Word> GetWordStatistics(string essay, double percentageMax)
         {
             var referringProcess = new ReferringProcess();
             referringProcess.UsePercentage = false;
@@ -277,7 +279,8 @@ namespace Referring.Core
                     .RemoveEmptyItemsInList()
                     .ToLower();
 
-            referringProcess.CalculateWordWeights();
+            //Send also AddProgressPercentage delegate for displaying comparison progress
+            referringProcess.CalculateWordWeights(true, percentageMax, AddProgressPercentage);
 
             return referringProcess.GoodWordList;
         }
