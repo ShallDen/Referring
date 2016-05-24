@@ -35,11 +35,15 @@ namespace Referring.Client
         {
             InitializeComponent();
 
+            HookEvents();
+            MoveToCursorPosition();
+        }
+
+        private void HookEvents()
+        {
             this.Activated += PopupWindow_Activated;
             this.Closing += PopupWindow_Closing;
             this.MouseLeftButtonDown += (object sender, MouseButtonEventArgs e) => this.DragMove(); //allows drag popup
-
-            MoveToCursorPosition();
         }
 
         public new string Title

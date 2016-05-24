@@ -44,40 +44,16 @@ namespace Referring.Client
         public MainWindow()
         {
             Logger.LogInfo("Loading main window...");
+
             InitializeComponent();
+
+            HookEvents();
             FillComboboxes();
+            BindControls();
+            SetReferringValues();
+            PerformUIChanges();
 
-            inputTextBox.TextChanged += InputTextBox_TextChanged;
-            selectFileButton.Click += SelectFileButton_Click;
-            referringCoefficientCombobox.SelectionChanged += CoefficientCombobox_SelectionChanged;
-            wordCutCombobox.SelectionChanged += WordCutCombobox_SelectionChanged;
-            runReferringButton.Click += RunReferringButton_Click;
-            showEssayButton.Click += ShowEssayButton_Click;
-            saveEssayButton.Click += SaveEssayButton_Click;
-            changeCollapseModeButton.Click += ChangeCollapseModeButton_Click;
-            
-            
             MainPresenter presenter = new MainPresenter(this);
-
-            inputTextBox.DataContext = ReferringManager.Instance;
-            usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
-            useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
-            useWordNet.DataContext = ReferringManager.Instance;
-            useWordCut.DataContext = ReferringManager.Instance;
-            wordGrid.DataContext = ReferringManager.Instance;
-            originalTextSentenceCount.DataContext = ReferringManager.Instance;
-
-            ReferringManager.Instance.IsPOSDetectionActivated = true;
-            ReferringManager.Instance.IsStemmingActivated = false;
-            ReferringManager.Instance.IsWordNetActivated = true;
-            ReferringManager.Instance.IsWordCutActivated = false;
-            ReferringManager.Instance.ReferringCoefficient = 0.5;
-            ReferringManager.Instance.WordCutLength = 3;
-            ReferringManager.Instance.WordNetDirectory = ConfigurationManager.AppSettings["WordNetDirectory"];
-
-            wordCutCombobox.Visibility = Visibility.Hidden;
-
-            ChangeCollapseMode();
 
             //TODO: Delete this code when development will be complete
             ///////////////////////
@@ -87,7 +63,7 @@ namespace Referring.Client
             FileManager.FileName = "text.txt";
 
             if (FileOpenClick != null)
-               FileOpenClick(this, new RoutedEventArgs());
+                FileOpenClick(this, new RoutedEventArgs());
 
             ///////////////////////
         }
@@ -100,7 +76,6 @@ namespace Referring.Client
         public event RoutedEventHandler RunRefferingClick;
         public event RoutedEventHandler ShowEssayClick;
         public event RoutedEventHandler ChangeCollapseModeClick;
-
 
         public bool IsCollapsed { get; set; }
 
@@ -133,6 +108,29 @@ namespace Referring.Client
             progressBar.Value = value;
         }
 
+        private void HookEvents()
+        {
+            inputTextBox.TextChanged += InputTextBox_TextChanged;
+            selectFileButton.Click += SelectFileButton_Click;
+            referringCoefficientCombobox.SelectionChanged += CoefficientCombobox_SelectionChanged;
+            wordCutCombobox.SelectionChanged += WordCutCombobox_SelectionChanged;
+            runReferringButton.Click += RunReferringButton_Click;
+            showEssayButton.Click += ShowEssayButton_Click;
+            saveEssayButton.Click += SaveEssayButton_Click;
+            changeCollapseModeButton.Click += ChangeCollapseModeButton_Click;
+        }
+
+        private void BindControls()
+        {
+            inputTextBox.DataContext = ReferringManager.Instance;
+            usePOSDetectionCheckBox.DataContext = ReferringManager.Instance;
+            useStemmingForAllTextCheckBox.DataContext = ReferringManager.Instance;
+            useWordNet.DataContext = ReferringManager.Instance;
+            useWordCut.DataContext = ReferringManager.Instance;
+            wordGrid.DataContext = ReferringManager.Instance;
+            originalTextSentenceCount.DataContext = ReferringManager.Instance;
+        }
+
         private void FillComboboxes()
         {
             referringCoefficientCombobox.ItemsSource = coefficients;
@@ -140,6 +138,33 @@ namespace Referring.Client
 
             wordCutCombobox.ItemsSource = wordLengths;
             wordCutCombobox.SelectedItem = wordLengths.First();
+        }
+
+        private void PerformUIChanges()
+        {
+            wordCutCombobox.Visibility = Visibility.Hidden;
+
+            ChangeCollapseMode();
+        }
+
+        private void SetReferringValues()
+        {
+            ReferringManager.Instance.IsPOSDetectionActivated = true;
+            ReferringManager.Instance.IsStemmingActivated = false;
+            ReferringManager.Instance.IsWordNetActivated = true;
+            ReferringManager.Instance.IsWordCutActivated = false;
+            ReferringManager.Instance.ReferringCoefficient = 0.5;
+            ReferringManager.Instance.WordCutLength = 3;
+
+            AssignWordNetDirectory();
+        }
+
+        private static void AssignWordNetDirectory()
+        {
+            var configValue = ConfigurationManager.AppSettings["WordNetDirectory"];
+
+            //Use 32bit Program Files path in case of 32bit system
+            ReferringManager.Instance.WordNetDirectory = Environment.Is64BitOperatingSystem ? configValue : configValue.Replace(" (x86)", "");
         }
 
         private void UpdateSentenceCount()
