@@ -51,7 +51,7 @@ namespace Referring.Client
 
         private void view_FileOpenClick(object sender, RoutedEventArgs e)
         {
-            if(FileManager.IsExist(FileManager.FileFullPath))
+            if (FileManager.IsExist(FileManager.FileFullPath))
             {
                 Logger.LogInfo("Opening file: " + FileManager.FileFullPath);
                 ReferringManager.Instance.OriginalText = FileManager.GetContent(FileManager.FileFullPath);
@@ -113,14 +113,28 @@ namespace Referring.Client
                 return;
             }
 
+            //Check WordNet directory and files
+            try
+            {
+                WordNetManager.CheckWordNetPaths(ReferringManager.Instance.WordNetDirectory);
+            }
+            catch (Exception ex)
+            {
+                MessageManager.ShowError(ex.Message);
+                Logger.LogError(ex.Message);
+                return;
+            }
+
             ReferringProcess referring = null; 
 
+            //Initialize referring and WordNet
             try
             {
                 referring = new ReferringProcess();
             }
             catch (Exception ex)
             {
+                Logger.LogError(ex.Message);
                 MessageManager.ShowError(ex.InnerException.Message);
                 Logger.LogError(ex.InnerException.Message);
                 return;

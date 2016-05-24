@@ -26,6 +26,7 @@ namespace Referring.Core
             get { return instance ?? (instance = new EssayComparisonManager()); }
         }
 
+        public double AccuracyError { get; set; }
         public ComparisonType ComparisonType { get; set; }
         public string FisrtEssay { get; set; }
         public string FisrtEssayPath { get; set; }

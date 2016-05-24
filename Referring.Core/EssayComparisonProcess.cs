@@ -152,7 +152,7 @@ namespace Referring.Core
             double progressPercentageMax = 100;
             double step = (progressPercentageMax - EssayComparisonManager.Instance.ProgressPercentageCurrent) / secondEssayStatistics.Count;
 
-            double error = 0.2;
+            double accuracyError = EssayComparisonManager.Instance.AccuracyError;
             double requiredHits = secondEssayStatistics.Count;
             double comparisonPercentage = 0;
             double hits = 0;
@@ -162,8 +162,8 @@ namespace Referring.Core
                 if (fisrtEssayStatistics.Where(c => c.Value == word.Value).Any())
                 {
                     var firstEssayWord = fisrtEssayStatistics.Where(c => c.Value == word.Value).First();
-                    var possibleWeightMin = firstEssayWord.Weight * (1 - error);
-                    var possibleWeightMax = firstEssayWord.Weight * (1 + error);
+                    var possibleWeightMin = firstEssayWord.Weight * (1 - accuracyError);
+                    var possibleWeightMax = firstEssayWord.Weight * (1 + accuracyError);
 
                     //Round minimum value
                     var integeterPartMin = Math.Truncate(possibleWeightMin);

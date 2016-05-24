@@ -30,6 +30,7 @@ namespace Referring.Core
         public int WordCutLength { get; set; }
         public bool IsReferringRunning { get; set; }
         public bool IsReferringCompete { get; set; }
+        public string WordNetDirectory { get; set; }
 
         public string AutoEssayPath
         {

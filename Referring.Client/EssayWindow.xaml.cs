@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Referring.Core;
 using Microsoft.Win32;
 using System.Threading;
+using System.Configuration;
 
 namespace Referring.Client
 {
@@ -35,6 +36,7 @@ namespace Referring.Client
 
             BindControls();
             HookEvents();
+            SetComparisonValues();
             PerformUIChanges();
             FillToolTips();
             FillCombobox();
@@ -65,10 +67,16 @@ namespace Referring.Client
             mainWordTypeSelectionComboBox.SelectionChanged += MainWordTypeSelectionComboBox_SelectionChanged;
         }
 
-        private void PerformUIChanges()
+        private void SetComparisonValues()
         {
             EssayComparisonManager.Instance.IsUseCurrentEssayAsFirstFile = true;
 
+            var configValue = ConfigurationManager.AppSettings["AccuracyError"];
+            EssayComparisonManager.Instance.AccuracyError = Double.Parse(configValue, System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private void PerformUIChanges()
+        {
             hitLabel.Visibility = Visibility.Hidden;
             essayComparisonPercentage.Visibility = Visibility.Hidden;
             mainWordTypeRadioButton.IsChecked = true;
@@ -181,18 +189,7 @@ namespace Referring.Client
             Logger.LogInfo("Second essay is " + EssayComparisonManager.Instance.SecondEssayPath);
             Logger.LogInfo("Essays were loaded. Starting comparison.");
 
-            EssayComparisonProcess comparisonProcess = null;
-
-            try
-            {
-                comparisonProcess = new EssayComparisonProcess();
-            }
-            catch (Exception ex)
-            {
-                MessageManager.ShowError(ex.InnerException.Message);
-                Logger.LogError(ex.InnerException.Message);
-                return;
-            }
+            EssayComparisonProcess comparisonProcess = new EssayComparisonProcess();
 
             comparisonProcess.ProgressChanged += EssayComparison_ProgressChanged;
             comparisonProcess.WorkCompleted += EssayComparison_WorkCompleted;

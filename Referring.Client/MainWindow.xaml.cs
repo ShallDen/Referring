@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Microsoft.Win32;
 using Referring.Core;
 using System.Collections.ObjectModel;
+using System.Configuration;
 
 namespace Referring.Client
 {
@@ -72,6 +73,7 @@ namespace Referring.Client
             ReferringManager.Instance.IsWordCutActivated = false;
             ReferringManager.Instance.ReferringCoefficient = 0.5;
             ReferringManager.Instance.WordCutLength = 3;
+            ReferringManager.Instance.WordNetDirectory = ConfigurationManager.AppSettings["WordNetDirectory"];
 
             wordCutCombobox.Visibility = Visibility.Hidden;
 

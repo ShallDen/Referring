@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Referring.WordNet;
 using LAIR.Collections.Generic;
+using System.IO;
 
 namespace Referring.Core
 {
@@ -12,9 +13,37 @@ namespace Referring.Core
     {
         private static WordNetEngine wordNetEngine;
 
-        static WordNetManager()
+        public WordNetManager()
         {
-            wordNetEngine = new WordNetEngine(@"C:\Program Files (x86)\WordNet\2.1\dict", false);
+            wordNetEngine = new WordNetEngine(ReferringManager.Instance.WordNetDirectory, false);
+        }
+
+        public static void CheckWordNetPaths(string wordNetDirectory)
+        {
+            if (!Directory.Exists(wordNetDirectory))
+                throw new DirectoryNotFoundException("Отсутствует WordNet директория: \n" + wordNetDirectory);
+
+            // get data and index paths
+            string[] dataPaths = new string[]
+            {
+                Path.Combine(wordNetDirectory, "data.adj"),
+                Path.Combine(wordNetDirectory, "data.adv"),
+                Path.Combine(wordNetDirectory, "data.noun"),
+                Path.Combine(wordNetDirectory, "data.verb")
+            };
+
+            string[] indexPaths = new string[]
+            {
+                Path.Combine(wordNetDirectory, "index.adj"),
+                Path.Combine(wordNetDirectory, "index.adv"),
+                Path.Combine(wordNetDirectory, "index.noun"),
+                Path.Combine(wordNetDirectory, "index.verb")
+            };
+
+            // make sure all files exist
+            foreach (string path in dataPaths.Union(indexPaths))
+                if (!File.Exists(path))
+                    throw new FileNotFoundException("Отсутствует WordNet файл: \n" + path);
         }
 
         private WordNetEngine.POS TransformPOS(string pos)
