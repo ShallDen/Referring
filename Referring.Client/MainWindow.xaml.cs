@@ -54,18 +54,6 @@ namespace Referring.Client
             PerformUIChanges();
 
             MainPresenter presenter = new MainPresenter(this);
-
-            //TODO: Delete this code when development will be complete
-            ///////////////////////
-
-            string userName = Environment.UserName;
-            FileManager.FileFullPath = "C:\\Users\\" + userName + "\\Desktop\\text.txt";
-            FileManager.FileName = "text.txt";
-
-            if (FileOpenClick != null)
-                FileOpenClick(this, new RoutedEventArgs());
-
-            ///////////////////////
         }
 
         public event RoutedEventHandler FileOpenClick;

@@ -113,9 +113,9 @@
                                             Grid.Column="0"
                                             Source="{Binding Path=Icon, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" 
                                             HorizontalAlignment="Right"
-                                            Margin="0,-20,-10,-10"
+                                            Margin="0,-15,-20,-10"
                                             Width="50"
-                                            Height="50"
+                                            Height="45"
                                             MouseLeftButtonDown="IconMouseLeftButtonDown"
                                             />
                                         <TextBlock
@@ -123,7 +123,7 @@
                                             Grid.Column="1"
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
-                                            Margin="24,0,0,0"
+                                            Margin="30,0,0,0"
                                             FontFamily="Palatino Linotype"
                                             FontSize="14"
                                             Opacity="0.66"
