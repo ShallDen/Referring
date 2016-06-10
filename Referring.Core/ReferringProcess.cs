@@ -18,7 +18,6 @@ namespace Referring.Core
     {
         private List<string> sentenceList;
         private List<string> wordList;
-        private List<string> sentenceListOriginalCase;
         private List<string> wordListUpperOriginalCase;
 
         private List<Word> goodWordList;
@@ -116,14 +115,8 @@ namespace Referring.Core
                 Logger.LogInfo("Taking required sentences with biggest weight.");
                 var requiredSentences = goodSentenceList.OrderByDescending(c => c.Weight).Take(requiredSentenceCount).ToList();
 
-                Logger.LogInfo("Using original cases in essay.");
-                sentenceListOriginalCase = ReferringManager.Instance.OriginalText.ClearUnnecessarySymbolsInText()
-                    .DivideTextToSentences()
-                    .ClearWhiteSpacesInList()
-                    .RemoveEmptyItemsInList();
-
                 Logger.LogInfo("Building the essay.");
-                string essay = BuildEssay(requiredSentences);
+                string essay = EssayBuilder.BuildEssay(requiredSentences, goodSentenceList);
 
                 ReferringManager.Instance.ReferredText = essay;
                 ReferringManager.Instance.IsReferringCompete = true;
@@ -395,34 +388,11 @@ namespace Referring.Core
             }
         }
 
-        private string BuildEssay(List<Sentence> requiredSentences)
-        {
-            string essay = string.Empty;
-
-            foreach (var sentence in goodSentenceList)
-            {
-                if (requiredSentences.Contains(sentence))
-                {
-                    if (!string.IsNullOrEmpty(essay))
-                    {
-                        essay = string.Format("{0} {1}. ", essay, sentenceListOriginalCase[sentence.Index - 1]);
-                    }
-                    else
-                    {
-                        essay = string.Format("{0}.", sentenceListOriginalCase[sentence.Index - 1]);
-                    }
-                }
-            }
-
-            Logger.LogInfo("Essay was built.");
-            return essay;
-        }
 
         private void InitializeLists()
         {
             sentenceList = new List<string>();
             wordList = new List<string>();
-            sentenceListOriginalCase = new List<string>();
             wordListUpperOriginalCase = new List<string>();
 
             goodWordList = new List<Word>();
